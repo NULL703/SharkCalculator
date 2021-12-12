@@ -1,0 +1,100 @@
+#************************************************************************
+# Makefile(Version is Windows).
+# Copyright (C) 2021 NULL_703, All rights reserved.
+# Created on 2021.10.16  12:04
+# Created by NULL_703
+# Last change time on 2021.12.6 21:26
+#*************************************************************************
+cpp = g++
+gc = gcc
+cflag = -O2 -std=c99 -Wall -s -c
+flag = -O2 -std=c++11 -Wall -s -c
+AsmFlag = -S -O2 -std=c++11 -Wall
+AsmCflag = -S -O2 -std=c99 -Wall
+asms = main.asm calculate.asm formulas.asm function.asm network.asm
+bin = shcalc.exe
+rc = windres -i
+res = shcalc.o libformula.o
+SRCRES = shcalc.rc libformula.rc
+obj = main.o calculate.o
+Lobj = formulas.o functions.o network.o
+lib = libformula.dll
+
+all: $(bin) $(lib)
+
+$(bin): $(obj) $(lib) shcalc.o
+	@echo "Build shcalc..."
+	$(cpp) $(obj) -L. $(lib) -s shcalc.o -o $(bin)
+	@echo "Finish!"
+
+main.o: main.cpp
+	$(cpp) $(flag) main.cpp -o main.o
+
+calculate.o: calculate.cpp
+	$(cpp) $(flag) calculate.cpp -o calculate.o
+
+$(lib): $(Lobj) libformula.o
+	@echo "Build libformula..."
+	$(gc) -shared $(Lobj) libformula.o -s -o $(lib)
+	@echo "Finish!"
+
+formulas.o: formulas.c
+	$(gc) $(cflag) -fPIC formulas.c -o formulas.o
+
+network.o: network.c
+	$(gc) $(cflag) -fPIC network.c -o network.o
+
+functions.o: functions.c
+	$(gc) $(cflag) -fPIC functions.c -o functions.o
+
+$(res): $(SRCRES)
+	$(rc) shcalc.rc -o shcalc.o
+	$(rc) libformula.rc -o libformula.o
+
+.PHONY: asm
+asm: $(asms)
+	@echo "Createing assembly file..."
+	mkdir assembly
+	mv $(asms)
+	@echo "Finish!"
+	@echo "Tips: All assembly code into folodr assembly."
+main.asm: main.cpp
+	$(cpp) $(AsmFlag) main.cpp -o main.asm
+
+calculate.asm: calculate.cpp
+	$(cpp) $(Asmflag) calculate.cpp -o calculate.asm
+
+formulas.asm: formulas.c
+	$(gc) $(AsmCflag) formulas.c -o formulas.asm
+
+function.asm: functions.c
+	$(gc) $(AsmCflag) functions.c -o functions.asm
+
+network.asm: network.c
+	$(gc) $(AsmCflag) network.c -o network.asm
+
+.PHONY: help
+help:
+	@echo "********************Makefile usage********************"
+	@echo "Copyright (C) 2021 NULL_703, All rights reserved."
+	@echo "Welcome use Makefile(Windows version)! The usage in below:"
+	@echo "make: build source code.(for default)"
+	@echo "make clean: remove all binary file."
+	@echo "make help: show help."
+	@echo "make move: move all executable file."
+	@echo "make asm: make assembly code."
+	@echo "**********************End of help**********************"
+
+.PHONY: move
+move:
+	@echo "Moving..."
+	mkdir binary
+	mv $(bin) $(lib) binary
+	@echo "finish!"
+
+.PHONY: clean
+clean:
+	@echo "Deleting all non source code file..."
+	-rm -f *.o *.exe *.asm $(bin) $(lib) $(res)
+	-rm -fr ./binary ./assembly
+	@echo "Finish!"
