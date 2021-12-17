@@ -6,6 +6,52 @@ Created by NULL_703
 Last change time on 2021.12.4  19:50
 ************************************************************************/
 #include "include/calculate.h"
+#include "include/main.h"
+
+void formulaErrno(int count, const char**argv)
+{
+    for(int i = 1; i <= count; ++i)
+    {
+        if(argv[i] == NULL)
+        {
+            printf("%s%s%s", F_RED, w0006, NORMAL);
+            configLog(6, __LINE__, __FILE__, __FUNCTION__);
+            exit(1);
+        }
+    }
+}
+
+void immediateCalculate(int argc, const char** argv)
+{
+    if(argc > 1 && (strcmp(argv[1], "-abs") == 0))
+    {
+        formulaErrno(2, argv);
+        printf("%s%f", w0015, shk_abs(atof(argv[2])));
+    }else if(argc > 1 && (strcmp(argv[1], "-pow") == 0)){
+        formulaErrno(3, argv);
+        printf("%s%f", w0015, shk_pow(atof(argv[2]), atof(argv[3])));
+    }else if(argc > 1 && (strcmp(argv[1], "-ang2rad") == 0)){
+        formulaErrno(2, argv);
+        printf("%s%f", w0015, shk_ang2rad(atof(argv[2])));
+    }else if(argc > 1 && (strcmp(argv[1], "-add") == 0)){
+        formulaErrno(3, argv);
+        printf("%s%f", w0015, calcTypeProc(cadd, atof(argv[2]), atof(argv[3])));
+    }else if(argc > 1 && (strcmp(argv[1], "-sub") == 0)){
+        formulaErrno(3, argv);
+        printf("%s%f", w0015, calcTypeProc(csub, atof(argv[2]), atof(argv[3])));
+    }else if(argc > 1 && (strcmp(argv[1], "-mul") == 0)){
+        formulaErrno(3, argv);
+        printf("%s%f", w0015, calcTypeProc(cmul, atof(argv[2]), atof(argv[3])));
+    }else if(argc > 1 && (strcmp(argv[1], "-div") == 0)){
+        formulaErrno(3, argv);
+        printf("%s%f", w0015, calcTypeProc(cdiv, atof(argv[2]), atof(argv[3])));
+    }else{
+        printf("%s%s%s", F_RED, w0016, NORMAL);
+        configLog(-1, __LINE__, __FILE__, __FUNCTION__);
+    }
+    configLog(0, __LINE__, __FILE__, __FUNCTION__);
+    exit(0);
+}
 
 double calcTypeProc(enum calc calcType, double x, double y)
 {

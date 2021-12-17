@@ -3,7 +3,7 @@
 Copyright (C) 2021 NULL_703. All rights reserved.
 Created on 2021.11.4  19:33
 Created by NULL_703
-Last change time on 2021.12.6  15:21
+Last change time on 2021.12.15  21:20
 ************************************************************************/
 #ifndef LIBFORMULA_FUNCTIONS_H
 #define LIBFORMULA_FUNCTIONS_H
@@ -11,7 +11,7 @@ Last change time on 2021.12.6  15:21
 #include "defvar.h"
 
 //常用的常数定义
-#if (!defined (M_PI) && defined (__STRICT_ANSI__))
+#if (!defined (M_PI))
 #define M_E        2.71828182845904523536   // e
 #define M_LOG2E    1.44269504088896340736   // log2(e)
 #define M_LOG10E   0.434294481903251827651  // log10(e)

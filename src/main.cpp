@@ -7,53 +7,126 @@ Last change time on 2021.12.11  12:24
 ************************************************************************/
 #include "include/main.h"
 
+static double results[255];
+static int resultsIndex = 0;
+static SHK_BOOL storageModeSwitch = SHK_FALSE;
+
+class resultLookup{
+    public:
+    void selectLookupMode()
+    {
+        char mode;
+        int par = 0;
+        printf("%s%s%s", F_LIGHT_BLUE, w0027, NORMAL);
+        scanf("%c", &mode);
+        while('\n' != getchar());
+        if(mode == 's')
+        {
+            printf("%s%s%s", F_LIGHT_CYAN, w0028, NORMAL);
+            scanf("%d", &par);
+            while('\n' != getchar());
+            printf("%s%s%f%s\n", F_LIGHT_GREEN, w0029, getResult(par), NORMAL);
+        }else if(mode == 'a'){
+            printf("%s%s%s", F_LIGHT_CYAN, w0028, NORMAL);
+            scanf("%d", &par);
+            while('\n' != getchar());
+            showAllResult(par);
+        }else{
+            printf("%s%s%s", F_RED, w0008, NORMAL);
+            configLog(6, __LINE__, __FILE__, __FUNCTION__);
+        }
+    }
+
+    double getResult(int index)
+    {
+        if(index >= resultsIndex)
+            return showErrorInfo();
+        return results[index];
+    }
+
+    void showAllResult(int maxResultNumber)
+    {
+        if(maxResultNumber >= resultsIndex)
+        {
+            showErrorInfo();
+            return;
+        }
+        for(int i = 0; i <= maxResultNumber; i++)
+            printf("%s%d\t%f%s\n", F_LIGHT_GREEN, i, results[i], NORMAL);
+    }
+
+    private:
+    int showErrorInfo()
+    {
+        printf("%s%s%s", F_RED, w0020, NORMAL);
+        configLog(4, __LINE__, __FILE__, __FUNCTION__);
+        return 0;
+    }
+};
+
 void normalCalc()
 {
     //TODO:常规计算将在后续版本开放
     ;
 }
 
-void configLog(int flag)
+void configLog(int flag, int line, const char* fileName, const char* funcName)
 {
-    //TODO:将在后续版本中补充文件操作的内容
-    ;
+    ofstream wrfile("ProgramLog.log", ios::app);
+    if(!wrfile.fail())
+    {
+        if(flag == 0)     //程序正常退出
+            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0001 << endl;
+        else if(flag == 1)     //程序正常启动
+            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0004 << endl;
+        else if(flag == 2)     //结果池数据溢出将重置的警告
+            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0003 << endl;
+        else if(flag == 3)     //文件未找到
+            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0005 << endl;
+        else if(flag == 4)     //无法获取结果池中的数据
+            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0006 << endl;
+        else if(flag == 5)     //文件打开失败
+            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0007 << endl;
+        else if(flag == 6)     //无效的表达式或命令参数
+            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0008 << endl;
+        else if(flag == 7)     //存储模式未打开的警告
+            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0009 << endl;
+        else if(flag == 8)     //无效命令参数(在日志中为警告，但在命令行中是输出错误信息)
+            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0010 << endl;
+        else     //未指定的未知错误
+            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0002 << endl;
+    }
 }
 
-/*-------------------------------------------------------------------
-*函数错误码值对应的含义：
-*0：正常情况的返回值                1：程序退出命令
-*2：表达式或数字错误                3：无效或错误的命令
-*4：其他不可预料的错误
-*------------------------------------------------------------------*/
-void mainFunc(int flag)
+double useResult(int resultNumber)
 {
-    int errCode = 0;
-    while(errCode == 0)
+    if(resultNumber >= resultsIndex)
     {
-        if(flag == 0)     //命令行没有参数
-        {
-            errCode = commandProc();
-            if(errCode != 0)
-                break;
-        }else if(flag == 1){     //简单计算模式
-            errCode = basicCalculate();
-            if(errCode != 0)
-                break;
-        }
-        mainFunc(flag);
+        printf("%s%s%s", F_RED, w0020, NORMAL);
+        configLog(0, __LINE__, __FILE__, __FUNCTION__);
+        return 0.0;
     }
-    if(errCode == 1)
-        exit(0);
-    else if(errCode == 2)
-        exit(1);
+    return results[resultNumber];
 }
 
-void arrayInit()
+void storageCalc()
 {
-    for(int i = 0; i <= 0xff; i++)
+    int x, y;
+    char op;
+    enum calc cmt = cadd;
+    printf("%s", w0026);
+    scanf("%d%c%d", &x, &op, &y);
+    setbuf(stdin, NULL);
+    if(x > resultsIndex || y > resultsIndex)
     {
-        results[i] = 0;
+        printf("%s%s%s", F_RED, w0020, NORMAL);
+        configLog(4, __LINE__, __FILE__, __FUNCTION__);
+        commandProc();
+        return;
     }
+    setbuf(stdin, NULL);
+    cmt = calcOper(op);
+    printf("%s%f\n", w0015, calcTypeProc(cmt, useResult(x), useResult(y)));
 }
 
 enum calc calcOper(char oper)
@@ -89,7 +162,12 @@ int basicCalculate()
     enum calc calculateMethod = cadd;
     printf("%s", w0009);
     scanf("%s", expr);
-    setbuf(stdin, NULL);
+    while('\n' != getchar());
+    if(expr[0] == 'e')
+    {
+        configLog(0, __LINE__, __FILE__, __FUNCTION__);
+        exit(0);
+    }
     for(int i = 0, j = 0; expr[i] != '\0'; i++, j++)
     {
         if(expr[i] == '+' || expr[i] == '-' || expr[i] == '*' || expr[i] == '/')
@@ -98,7 +176,7 @@ int basicCalculate()
             if(flagNumber == 1 && ((int)expr[i] > 58 || (int)expr[i] < 48))
             {
                 printf("%s%s%s", F_RED, w0011, NORMAL);
-                return 2;
+                return 0;
             }
             flagNumber = 1;
             oper = expr[i];
@@ -108,13 +186,13 @@ int basicCalculate()
         if(flagNumber == 0)
             exprElement1[j] = expr[i];
         else
-            exprElement2[j - 1] = expr[i];     //This code is VERY powerful!!!
+            exprElement2[j - 1] = expr[i];
     }
     numx = atof(exprElement1);
     numy = atof(exprElement2);
     calculateMethod = calcOper(oper);
     if(calculateMethod == err)
-        return 2;
+        return 1;
     result = calcTypeProc(calculateMethod, numx, numy);
     if(storageModeSwitch == SHK_TRUE)
     {
@@ -122,6 +200,7 @@ int basicCalculate()
         {
             printf("%s%s%s", F_YELLOW, w0021, NORMAL);
             resultsIndex = 0;
+            configLog(2, __LINE__, __FILE__, __FUNCTION__);
         }
         results[resultsIndex] = result;
         resultsIndex += 1;
@@ -130,92 +209,129 @@ int basicCalculate()
     return 0;
 }
 
-int commandProc()
+void cleanResult()
+{
+    char choose;
+    printf("%s", w0018);
+    scanf("%c", &choose);
+    while('\n' != getchar());
+    if(choose == 'y' || choose == 'Y')
+    {
+        resultsIndex = 0;
+        printf("%s%s%s", F_LIGHT_BLUE, w0031, NORMAL);
+    }else{
+        printf("%s%s%s", F_LIGHT_BLUE, w0030, NORMAL);
+        return;
+    }
+}
+
+void commandProc()
 {
     char command;
+    resultLookup lookup;
     printf("%s", w0002);
-    //cin.ignore(0x1000, '\n');
     scanf("%c", &command);
-    setbuf(stdin, NULL);
+    while('\n' != getchar());
     if(command == 'n')
     {
         printf("%s%s%s", F_RED, w0014, NORMAL);
-        return 2;
-    }else if(command == 'f'){
-        printf("%s%s%s", F_RED, w0014, NORMAL);
-        return 2;
+        commandProc();
     }else if(command == 'b'){
         basicCalculate();
-        return 0;
+        commandProc();
     }else if(command == 'h'){
-        printf("%s", w0001);
-        return 0;
+        printf("%s%s%s  %s", w0001, w0022, __DATE__, __TIME__);
+        commandProc();
     }else if(command == 'l'){
         printf("%s%s%s", F_RED, w0014, NORMAL);
-        return 2;
+        commandProc();
     }else if(command == 's'){
         if(storageModeSwitch == SHK_FALSE)
         {
+            printf("%s%s%s", F_LIGHT_BLUE, w0023, NORMAL);
             storageModeSwitch = SHK_TRUE;
-            return 0;
+            commandProc();
         }else{
+            printf("%s%s%s", F_LIGHT_BLUE, w0024, NORMAL);
             storageModeSwitch = SHK_FALSE;
-            return 0;
+            commandProc();
+        }
+    }else if(command == 'u'){
+        if(storageModeSwitch == SHK_TRUE && resultsIndex >= 1)
+        {
+            storageCalc();
+            commandProc();
+        }else{
+            printf("%s%s%s", F_YELLOW, w0025, NORMAL);
+            configLog(4, __LINE__, __FILE__, __FUNCTION__);
+            commandProc();
         }
     }else if(command == 'e'){
-        return 1;
+        configLog(0, __LINE__, __FILE__, __FUNCTION__);
+        exit(0);
+    }else if(command == 'q'){
+        if(storageModeSwitch == SHK_TRUE)
+            lookup.selectLookupMode();
+        else{
+            printf("%s%s%s", F_RED, w0019, NORMAL);
+            configLog(4, __LINE__, __FILE__, __FUNCTION__);
+        }
+        commandProc();
+    }else if(command == 'c'){
+        if(storageModeSwitch == SHK_TRUE)
+        {
+            cleanResult();
+            commandProc();
+        }else{
+            printf("%s%s%s", F_RED, w0019, NORMAL);
+        }
     }else{
         printf("%s%s%s", F_RED, w0008, NORMAL);
-        return 3; 
+        configLog(6, __LINE__, __FILE__, __FUNCTION__);
+        commandProc(); 
     }
-    return 0;
+    commandProc();
 }
 
 int main(int argc, const char** argv)
 {
+    configLog(1, __LINE__, __FILE__, __FUNCTION__);
     #ifdef __WIN32
         system("cls");
     #endif
+    if(argc > 2)
+        immediateCalculate(argc, argv);
     if(argv[1] == NULL)
     {
         printf("%s%s%s", F_RED, w0004, NORMAL);
-        mainFunc(0);
-    }
-    arrayInit();
-    if(argc > 1 && (strcmp(argv[1], "-abs") == 0))
-    {
-        printf("%s%f", w0015, shk_abs(atof(argv[2])));
-        return 0;
+        printf("%s%s%s%s  %s\n", w0017, w0001, w0022, __DATE__, __TIME__);
+        configLog(8, __LINE__, __FILE__, __FUNCTION__);
+        commandProc();
     }else{
         if(strcmp(argv[1], "-n") == 0){
             printf("%s%s%s", F_RED, w0014, NORMAL);
             return 1;
-        }
-        else if(strcmp(argv[1], "-f") == 0){
+        }else if(strcmp(argv[1], "-h") == 0){
             printf("%s%s%s", F_RED, w0014, NORMAL);
             return 1;
-        }
-        else if(strcmp(argv[1], "-h") == 0){
-            printf("%s%s%s", F_RED, w0014, NORMAL);
-            return 1;
-        }
-        else if(strcmp(argv[1], "--bh") == 0)
-        {
-            printf("%s", w0001);
+        }else if(strcmp(argv[1], "--bh") == 0){
+            printf("%s%s%s  %s", w0001, w0022, __DATE__, __TIME__);
             return 0;
-        }
-        else if(strcmp(argv[1], "--basic") == 0)
-            mainFunc(1);
-        else if(strcmp(argv[1], "--storage") == 0){
-            printf("%s%s%s", F_RED, w0014, NORMAL);
-            return 1;
-            // storageModeSwitch = SHK_TRUE;
-            // mainFunc(0);
+        }else if(strcmp(argv[1], "--basic") == 0){
+            if(basicCalculate() != 0)
+                printf("%s%s%s", F_RED, w0013, NORMAL);
+            commandProc();
+        }else if(strcmp(argv[1], "--storage") == 0){
+            storageModeSwitch = SHK_TRUE;
+            commandProc();
         }else{
             printf("%s%s%s%s", F_RED, w0004, NORMAL, w0017);
-            printf("%s", w0001);
-            mainFunc(0);
+            printf("%s%s%s  %s\n", w0001, w0022, __DATE__, __TIME__);
+            configLog(8, __LINE__, __FILE__, __FUNCTION__);
+            commandProc();
         }
     }
-    return 0;
+    printf("%s%s%s", F_RED, w0007, NORMAL);
+    configLog(-1, __LINE__, __FILE__, __FUNCTION__);
+    return 1;
 }
