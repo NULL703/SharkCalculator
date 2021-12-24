@@ -62,7 +62,7 @@ main.asm: main.cpp
 	$(cpp) $(AsmFlag) main.cpp -o main.asm
 
 calculate.asm: calculate.cpp
-	$(cpp) $(Asmflag) calculate.cpp -o calculate.asm
+	$(cpp) $(AsmFlag) calculate.cpp -o calculate.asm
 
 formulas.asm: formulas.c
 	$(gc) $(AsmCflag) formulas.c -o formulas.asm

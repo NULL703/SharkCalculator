@@ -3,7 +3,7 @@
 Copyright (C) 2021 NULL_703. All rights reserved.
 Created on 2021.11.4  19:33
 Created by NULL_703
-Last change time on 2021.12.15  21:20
+Last change time on 2021.12.24  9:22
 ************************************************************************/
 #ifndef LIBFORMULA_FUNCTIONS_H
 #define LIBFORMULA_FUNCTIONS_H
@@ -11,7 +11,7 @@ Last change time on 2021.12.15  21:20
 #include "defvar.h"
 
 //常用的常数定义
-#if (!defined (M_PI))
+#if (!defined (M_PI) || defined (USE_MATHCONST))
 #define M_E        2.71828182845904523536   // e
 #define M_LOG2E    1.44269504088896340736   // log2(e)
 #define M_LOG10E   0.434294481903251827651  // log10(e)
@@ -60,7 +60,12 @@ int shk_mod(int x, int y);
 int shk_strlen(const char* s);
 //字符串转换为整数
 long shk_AsciiToNum(char* number);
-
+//字符串倒置函数
+char* shk_StrInvert(const char* str);
+//十进制转换为二进制
+SHK_BINARY shk_DecToBin(int decNum);
+//二进制转换为十进制
+int shk_BinToDec(const char* origbin);
 /*End of section.*/
 #ifdef __cplusplus
 }

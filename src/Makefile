@@ -3,7 +3,7 @@
 # Copyright (C) 2021 NULL_703. All rights reserved.
 # Created on 2021.10.7  17:40
 # Created by NULL_703
-# Last change time on 2021.12.6  20:43
+# Last change time on 2021.12.23  12:01
 #*************************************************************************
 cpp = g++
 gc = gcc
@@ -55,7 +55,7 @@ main.asm: main.cpp
 	$(cpp) $(AsmFlag) main.cpp -o main.asm
 
 calculate.asm: calculate.cpp
-	$(cpp) $(Asmflag) -S calculate.cpp -o calculate.asm
+	$(cpp) $(AsmFlag) calculate.cpp -o calculate.asm
 
 formulas.asm: formulas.c
 	$(gc) $(AsmCflag) formulas.c -o formulas.asm
@@ -90,7 +90,7 @@ move:
 .PHONY: clean
 clean:
 	@echo "Deleting all non source code file..."
-	-rm -f *.o *.asm $(bin)
+	-rm -f *.o *.asm $(bin) $(lib)
 	-rm -fr ./binary ./assembly
 	@echo "Finish!"
 

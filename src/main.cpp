@@ -3,7 +3,7 @@ Main program.
 Copyright (C) 2021 NULL_703. All rights reserved.
 Created on 2021.10.7  17:31
 Created by NULL_703
-Last change time on 2021.12.11  12:24
+Last change time on 2021.12.24  9:21
 ************************************************************************/
 #include "include/main.h"
 
@@ -134,20 +134,30 @@ enum calc calcOper(char oper)
     switch(oper)
     {
         case '+':
+        {
             return cadd;
             break;
+        }
         case '-':
+        {
             return csub;
             break;
+        }
         case '*':
+        {
             return cmul;
             break;
+        }
         case '/':
+        {
             return cdiv;
             break;
+        }
         default:
+        {
             printf("%s%s%s", F_RED, w0016, NORMAL);
             return err;
+        }
     }
 }
 
@@ -324,6 +334,9 @@ int main(int argc, const char** argv)
         }else if(strcmp(argv[1], "--storage") == 0){
             storageModeSwitch = SHK_TRUE;
             commandProc();
+        }else if(strcmp(argv[1], "--cleanlog") == 0){
+            printf("%s%s%s", F_RED, w0014, NORMAL);
+            return 1;
         }else{
             printf("%s%s%s%s", F_RED, w0004, NORMAL, w0017);
             printf("%s%s%s  %s\n", w0001, w0022, __DATE__, __TIME__);

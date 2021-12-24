@@ -3,7 +3,7 @@
 Copyright (C) 2021 NULL_703. All rights reserved.
 Created on 2021.11.4  19:31
 Created by NULL_703
-Last change time on 2021.12.11  12:24
+Last change time on 2021.12.24  9:22
 ************************************************************************/
 #include "include/functions.h"
 #include <math.h>
@@ -38,7 +38,7 @@ double shk_cexp(double x)
 int shk_strlen(const char* s)
 {
     const char *sc;
-    for(sc = s; *s; ++sc){;}
+    for(sc = s; *sc; ++sc){;}
     return sc - s;
 }
 
@@ -78,7 +78,76 @@ long shk_AsciiToNum(char* number)
     numBit = shk_strlen(number);
     if(numBit >= 10)
         return 0xffff;
-    for(int i = numBit; i > 0; i++)
-        result += (number[i - 1] - 48) * shk_pow(10, i);
+    for(int i = 0; i < numBit; i++)
+        result += (number[i] - 48) * (shk_pow(10, numBit - i) / 10);
+    return result;
+}
+
+int shk_adder(int min, int max)
+{
+    int result = min;
+    for(int i = 0; i < max - min; i++)
+        result += min + (i + 1);
+    return result;
+}
+
+SHK_BOOL shk_IsStrNum(const char* num, SHK_BOOL intMode)
+{
+    int count = shk_strlen(num);
+    SHK_BOOL decPoint = SHK_FALSE;
+    for(int i = 0; i < count; i++)
+    {
+        if(num[i] > 52 || num[i] < 48)
+        {
+            if(intMode == SHK_TRUE)
+                return SHK_FALSE;
+            else{
+                if(num[i] != '.' || (num[i] == '.' && decPoint == SHK_TRUE))
+                    return SHK_FALSE;
+                if(num[i] == '.')
+                    decPoint = SHK_TRUE;
+            }
+        }
+    }
+    return SHK_TRUE;
+}
+
+char* shk_StrInvert(const char* str)
+{
+    int charCount = shk_strlen(str);
+    if(charCount > 0xffff)
+        return "Error: string too long!";
+    static char result[0xffff];
+    for(int i = charCount, j = 0; i >= 0; i--, j++)
+        result[j] = str[i - 1];
+    return result;
+}
+
+SHK_BINARY shk_DecToBin(int decNum)
+{
+    static char result[0x100];
+    for(int i = 0; decNum >= 1; i++)
+    {
+        result[i] = shk_mod(decNum, 2) + 48;
+        /*在每次取模之后减去余数再除以2*/
+        decNum -= shk_mod(decNum, 2);
+        decNum /= 2;
+    }
+    return shk_StrInvert(result);     //倒置字符串得到整数对应的二进制值
+}
+
+int shk_BinToDec(const char* origbin)
+{
+    int index = shk_strlen(origbin);
+    int result = 0;
+    for(; index > 0; index--)
+    {
+        if(origbin[index - 1] == '1')
+            result += shk_pow(2, (shk_strlen(origbin) - (index - 1) - 1));
+        else if(origbin[index - 1] == '0')
+            result += 0;
+        else
+            return 0xffff;
+    }
     return result;
 }

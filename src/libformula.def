@@ -17,7 +17,7 @@ EXPORTS
     shk_rand                   @14
     shk_sqrt                   @15
     shk_gradient               @16
-    shk_btd                    @17
+    shk_BinToDec               @17
     shk_FibonacciSON           @18
     shk_EarthDistance          @19
     shk_MatrixAdd              @20
@@ -41,5 +41,7 @@ EXPORTS
     shk_mod                    @38
     shk_strlen                 @39
     shk_AsciiToNum             @40
-    shk_ipv4AddressType        @41
-    shk_netAddress             @42
+    shk_StrInvert              @41
+    shk_DecToBin               @42
+    shk_ipv4AddressType        @43
+    shk_netAddress             @44

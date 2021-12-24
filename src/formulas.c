@@ -3,7 +3,7 @@
 Copyright (C) 2021 NULL_703. All rights reserved.
 Created on 2021.10.7  17:39
 Created by NULL_703
-Last change time on 2021.12.4  17:15
+Last change time on 2021.12.24  9:23
 ************************************************************************/
 #include "include/formulas.h"
 #include <stdlib.h>
@@ -18,12 +18,12 @@ double ASCF(double term1, int term_num, double cd)
 
 double GSCF(double term1, int term_num, double cr)
 {
-    return term1 * pow(cr, term_num - 1);
+    return term1 * shk_pow(cr, term_num - 1);
 }
 
 double PTPF(double x1, double x2, double y1, double y2)
 {
-    return sqrt(pow((x2 - x1), 2) + pow((y2 - y1), 2));
+    return sqrt(shk_pow((x2 - x1), 2) + shk_pow((y2 - y1), 2));
 }
 
 double shk_mip(double x1, double x2)
@@ -33,7 +33,7 @@ double shk_mip(double x1, double x2)
 
 double CRS(double r)
 {
-    return M_PI * pow(r, 2);
+    return M_PI * shk_pow(r, 2);
 }
 
 double CRC(double r)
@@ -43,12 +43,12 @@ double CRC(double r)
 
 double SHV(double r)
 {
-    return (4 / 3) * M_PI * pow(r, 3);
+    return (4 / 3) * M_PI * shk_pow(r, 3);
 }
 
 double SHS(double r)
 {
-    return 4 * M_PI * pow(r, 2);
+    return 4 * M_PI * shk_pow(r, 2);
 }
 
 double CLEV(double sh, double ht)
@@ -63,7 +63,7 @@ double CLEFS(double r, double l)
 
 double CLCRV(double r, double h)
 {
-    return M_PI * pow(r, 2) * h;
+    return M_PI * shk_pow(r, 2) * h;
 }
 
 double CLCRS(double r, double l)
@@ -135,7 +135,7 @@ long shk_perm(int tpn, int lwn)
 {
     if(lwn > 10)
         return -0xffff;
-    int result = 1;
+    long result = 1;
     for(; lwn > 0; lwn--)
     {
         result *= tpn;
@@ -150,45 +150,29 @@ long shk_fact(int num)
     return result;
 }
 
-int shk_btd(char* origbin)
-{
-    int index = shk_strlen(origbin);
-    int result = 0;
-    for(; index >= 0; index--)
-    {
-        if(origbin[index - 1] == '1')
-            result += shk_pow(2, index);
-        else if(origbin[index - 1] == '0')
-            result += 0;
-        else
-            return 0xffff;
-    }
-    return result;
-}
-
-double shk_avg(double datas[], int term)
+double shk_avg(double* datas, int term)
 {
     double result;
     double temp = 0;
-    for(int i = term; i > 0; i--)
+    for(int i = term; i >= 0; i--)
         temp += datas[i];
     result = temp / term;
     return result;
 }
 
-double shk_deviation(double datas[], double mean, int term)
+double shk_deviation(double* datas, double mean, int term)
 {
     double temp = 0;
     double result;
-    for(int i = term; i > 0; i--)
+    for(int i = term; i >= 0; i--)
     {
-        temp += datas[i] - mean;
+        temp += shk_pow(datas[i] - mean, 2);
     }
-    result = (1 / term) * temp;
+    result = (1.0 / term) * temp;
     return result;
 }
 
-double shk_RootDeviantion(double datas[], double mean, int term)
+double shk_RootDeviantion(double* datas, double mean, int term)
 {
     return sqrt(shk_deviation(datas, mean, term));
 }

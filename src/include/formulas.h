@@ -3,7 +3,7 @@ formulas.c的函数声明。
 Copyright (C) 2021 NULL_703. All rights reserved.
 Created on 2021.10.7  21:39
 Created by NULL_703
-Last change time on 2021.12.6  15:23
+Last change time on 2021.12.24  9:23
 ************************************************************************/
 #ifndef LIBFORMULA_FORMULAS_H
 #define LIBFORMULA_FORMULAS_H
@@ -57,11 +57,14 @@ int shk_rand(int max, int min);
 double shk_sqrt(double num);
 //斜率公式
 double shk_gradient(double x1, double x2, double y1, double y2);
-//二进制转换为十进制
-int shk_btd(char* origbin);
+//平均数公式
+double shk_avg(double* datas, int term);
+//方差公式
+double shk_deviation(double* datas, double mean, int term);
+//标准差公式
+double shk_RootDeviantion(double* datas, double mean, int term);
 //斐波那契数列通项公式
 int shk_FibonacciSON(int n);
-
 /*End of section.*/
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 *Section2:高等数学相关的公式和算法
