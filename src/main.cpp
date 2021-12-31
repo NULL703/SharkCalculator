@@ -3,9 +3,10 @@ Main program.
 Copyright (C) 2021 NULL_703. All rights reserved.
 Created on 2021.10.7  17:31
 Created by NULL_703
-Last change time on 2021.12.24  9:21
+Last change time on 2021.12.31  12:48
 ************************************************************************/
 #include "include/main.h"
+#include "include/fileopt.h"
 
 static double results[255];
 static int resultsIndex = 0;
@@ -68,34 +69,6 @@ void normalCalc()
 {
     //TODO:常规计算将在后续版本开放
     ;
-}
-
-void configLog(int flag, int line, const char* fileName, const char* funcName)
-{
-    ofstream wrfile("ProgramLog.log", ios::app);
-    if(!wrfile.fail())
-    {
-        if(flag == 0)     //程序正常退出
-            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0001 << endl;
-        else if(flag == 1)     //程序正常启动
-            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0004 << endl;
-        else if(flag == 2)     //结果池数据溢出将重置的警告
-            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0003 << endl;
-        else if(flag == 3)     //文件未找到
-            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0005 << endl;
-        else if(flag == 4)     //无法获取结果池中的数据
-            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0006 << endl;
-        else if(flag == 5)     //文件打开失败
-            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0007 << endl;
-        else if(flag == 6)     //无效的表达式或命令参数
-            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0008 << endl;
-        else if(flag == 7)     //存储模式未打开的警告
-            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0009 << endl;
-        else if(flag == 8)     //无效命令参数(在日志中为警告，但在命令行中是输出错误信息)
-            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0010 << endl;
-        else     //未指定的未知错误
-            wrfile << time(NULL) << ": in '" << fileName << "':\n\tfunction '" << funcName << "': Line" << line << L0002 << endl;
-    }
 }
 
 double useResult(int resultNumber)
@@ -295,6 +268,8 @@ void commandProc()
         }else{
             printf("%s%s%s", F_RED, w0019, NORMAL);
         }
+    }else if(command == 'd'){
+        deleteFile("ProgramLog.log");
     }else{
         printf("%s%s%s", F_RED, w0008, NORMAL);
         configLog(6, __LINE__, __FILE__, __FUNCTION__);
@@ -306,11 +281,11 @@ void commandProc()
 int main(int argc, const char** argv)
 {
     configLog(1, __LINE__, __FILE__, __FUNCTION__);
+    if(argc > 2)
+        immediateCalculate(argc, argv);
     #ifdef __WIN32
         system("cls");
     #endif
-    if(argc > 2)
-        immediateCalculate(argc, argv);
     if(argv[1] == NULL)
     {
         printf("%s%s%s", F_RED, w0004, NORMAL);
@@ -335,8 +310,8 @@ int main(int argc, const char** argv)
             storageModeSwitch = SHK_TRUE;
             commandProc();
         }else if(strcmp(argv[1], "--cleanlog") == 0){
-            printf("%s%s%s", F_RED, w0014, NORMAL);
-            return 1;
+            deleteFile("ProgramLog.log");
+            return 0;
         }else{
             printf("%s%s%s%s", F_RED, w0004, NORMAL, w0017);
             printf("%s%s%s  %s\n", w0001, w0022, __DATE__, __TIME__);

@@ -3,7 +3,7 @@
 Copyright (C) 2021 NULL_703. All rights reserved.
 Created on 2021.12.12  21:26
 Created by NULL_703
-Last change time on 2021.12.14  20:57
+Last change time on 2021.12.24  14:01
 ************************************************************************/
 #ifndef SHARKCALCULATOR_LOGTEXTS_H
 #define SHARKCALCULATOR_LOGTEXTS_H
@@ -17,4 +17,5 @@ Last change time on 2021.12.14  20:57
     #define L0008 ": Expression or parameter is invalid.[E_2001]"
     #define L0009 ": Storage mode is not open or result too few, cannot execute command.[W_3002]"
     #define L0010 ": Invalid command parameter, approaching the internal command mode.[W_2001]"
+    #define L0011 ": Deleted file.[I_4042]"
 #endif     //SHARKCALCULATOR_LOGTEXTS_H

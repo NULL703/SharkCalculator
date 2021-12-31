@@ -3,11 +3,11 @@
 Copyright (C) 2021 NULL_703. All rights reserved.
 Created on 2021.10.7  17:37
 Created by NULL_703
-Last change time on 2021.12.17  17:53
+Last change time on 2021.12.25  9:23
 ************************************************************************/
 #ifndef SHARKCALCULATOR_TEXTS_H
 #define SHARKCALCULATOR_TEXTS_H
-    #define w0001 "SharkCalculator v1.0.1, Copyright (C) NULL_703. All rights reserved.\n"\
+    #define w0001 "SharkCalculator v1.0.2, Copyright (C) NULL_703. All rights reserved.\n"\
         "Usage: shcalc {options: [<none option>] [-<calculate flag>] [-n] [-h] [--bh] [--basic] [--storage]} {nums} ...\n"\
         "Mainly option:\n"\
         "    [<none option>]: Use internal command.(for no option)\n"\
@@ -17,6 +17,7 @@ Last change time on 2021.12.17  17:53
         "    [--bh]: Show basic help.\n"\
         "    [--basic]: Basic calculate mode.\n"\
         "    [--storage]: Open storage mode.\n"\
+        "    [--cleanlog]: Delete logger file.\n"\
         "Program internal command: [n] [b] [l] [h] [s] [u] [e] [q] [c]\n"\
         "    n: Use normal calculate mode.\033[0;32;31m <Not open>\033[m\n"\
         "    b: Basic calculate mode.\n"\
@@ -26,7 +27,8 @@ Last change time on 2021.12.17  17:53
         "    u: Use result calculate.\n"\
         "    e: Exit program.\n"\
         "    q: Lookup the data in the result-pool.\n"\
-        "    c: Clean the data in the result-pool.\n"
+        "    c: Clean the data in the result-pool.\n"\
+        "    d: Delete logger file and exit program.\n"
     #define w0002 "Please input command:\n-->"
     #define w0003 "\aError: Cannot be divided by 0![E_1001]\n"
     #define w0004 "\aError: Invalid parameter![E_2001]\n"
@@ -57,4 +59,7 @@ Last change time on 2021.12.17  17:53
     #define w0029 "This result is:"
     #define w0030 "Opertion cancel or option error.[I_3003]\n"
     #define w0031 "Opertion succeed.\n"
+    #define w0032 "The file have been delete.[I_4042]\n"
+    #define w0033 "\aError: The file delete failed.[E_4041]\n"
+    #define w0034 "Are you delete logger file?(y/n)\n"
 #endif     //SHARKCALCULATOR_TEXTS_H

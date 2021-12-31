@@ -3,7 +3,7 @@
 Copyright (C) 2021 NULL_703. All rights reserved.
 Created on 2021.11.4  19:31
 Created by NULL_703
-Last change time on 2021.12.24  9:22
+Last change time on 2021.12.31  14:48
 ************************************************************************/
 #include "include/functions.h"
 #include <math.h>
@@ -116,7 +116,7 @@ char* shk_StrInvert(const char* str)
 {
     int charCount = shk_strlen(str);
     if(charCount > 0xffff)
-        return "Error: string too long!";
+        return "!SLE";
     static char result[0xffff];
     for(int i = charCount, j = 0; i >= 0; i--, j++)
         result[j] = str[i - 1];
@@ -128,6 +128,8 @@ SHK_BINARY shk_DecToBin(int decNum)
     static char result[0x100];
     for(int i = 0; decNum >= 1; i++)
     {
+        if(i >= 0x100)
+            return "!BLE";
         result[i] = shk_mod(decNum, 2) + 48;
         /*在每次取模之后减去余数再除以2*/
         decNum -= shk_mod(decNum, 2);
@@ -148,6 +150,23 @@ int shk_BinToDec(const char* origbin)
             result += 0;
         else
             return 0xffff;
+    }
+    return result;
+}
+
+SHK_BINARY shk_BitAnd(const SHK_BINARY bin1, const SHK_BINARY bin2)
+{
+    static char result[0x100];
+    if(shk_strlen(bin1) != shk_strlen(bin2))
+        return "!NEQ";
+    for(int i = 0; i <= 0x100; ++i)
+    {
+        if(bin1[i] < 48 || bin2[i] < 48 || bin1[i] > 49 || bin2[i] > 49)
+            return "!NOB";
+        if(bin1[i] == bin2[i])
+            result[i] = '1';
+        else
+            result[i] = '0';
     }
     return result;
 }

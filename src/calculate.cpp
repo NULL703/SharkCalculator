@@ -6,6 +6,7 @@ Created by NULL_703
 Last change time on 2021.12.4  19:50
 ************************************************************************/
 #include "include/calculate.h"
+#include "include/fileopt.h"
 #include "include/main.h"
 
 void formulaErrno(int count, const char**argv)
@@ -45,6 +46,12 @@ void immediateCalculate(int argc, const char** argv)
     }else if(argc > 1 && (strcmp(argv[1], "-div") == 0)){
         formulaErrno(3, argv);
         printf("%s%f", w0015, calcTypeProc(cdiv, atof(argv[2]), atof(argv[3])));
+    }else if(argc > 1 && (strcmp(argv[1], "-dectobin") == 0)){
+        formulaErrno(2, argv);
+        printf("%s%s", w0015, shk_DecToBin(atof(argv[2])));
+    }else if(argc > 1 && (strcmp(argv[1], "-bintodec") == 0)){
+        formulaErrno(2, argv);
+        printf("%s%d", w0015, shk_BinToDec(argv[2]));
     }else{
         printf("%s%s%s", F_RED, w0016, NORMAL);
         configLog(-1, __LINE__, __FILE__, __FUNCTION__);
@@ -58,20 +65,30 @@ double calcTypeProc(enum calc calcType, double x, double y)
     switch(calcType)
     {
         case cadd:
+        {
             return add(x, y);
             break;
+        }
         case csub:
+        {
             return sub(x, y);
             break;
+        }
         case cmul:
+        {
             return mul(x, y);
             break;
+        }
         case cdiv:
+        {
             return div(x, y);
             break;
+        }
         default:
+        {
             printf("%s%s%s", F_RED, w0016, NORMAL);
             return -0xffff;
+        }
     }
 }
 

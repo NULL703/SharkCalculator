@@ -3,11 +3,11 @@
 Copyright (C) 2021 NULL_703. All rights reserved.
 Created on 2021.12.6  12:37
 Created by NULL_703
-Last change time on 2021.12.17  17:53
+Last change time on 2021.12.25  9:20
 ************************************************************************/
 #ifndef SHARKCALCULATOR_TEXTS_H
 #define SHARKCALCULATOR_TEXTS_H
-    #define w0001 "SharkCalculator v0.0.0, Copyright (C) NULL_703. All rights reserved.\n"\
+    #define w0001 "SharkCalculator v1.0.2, Copyright (C) NULL_703. All rights reserved.\n"\
         "用法: shcalc {选项: [<没有选项>] [-<计算选项标识符>] [-n] [-h] [--bh] [--basic] [--storage]} {数字} ...\n"\
         "主要选项:\n"\
         "    [<没有选项>]: 使用内部命令。(在没有选项的情况下)\n"\
@@ -17,6 +17,7 @@ Last change time on 2021.12.17  17:53
         "    [--bh]: 显示简单的帮助。\n"\
         "    [--basic]: 简单计算模式。\n"\
         "    [--storage]: 打开存储模式。\n"\
+        "    [--cleanlog]: 删除日志文件。\n"\
         "程序内部命令: [n] [b] [l] [h] [s] [u] [e] [q] [c]\n"\
         "    n: 使用常规计算。\033[0;32;31m <尚未开放>\033[m\n"\
         "    b: 简单计算模式。\n"\
@@ -26,7 +27,8 @@ Last change time on 2021.12.17  17:53
         "    u: 使用结果进行计算。\n"\
         "    e: 退出程序。\n"\
         "    q: 查找结果池中的数据。\n"\
-        "    c: 清除结果池中的数据。\n"
+        "    c: 清除结果池中的数据。\n"\
+        "    d: 删除日志文件并退出程序。\n"
     #define w0002 "请输入命令:\n-->"
     #define w0003 "\a错误：不能除以0！[E_1001]\n"
     #define w0004 "\a错误：无效参数！[E_2001]\n"
@@ -57,4 +59,7 @@ Last change time on 2021.12.17  17:53
     #define w0029 "这个结果是："
     #define w0030 "操作取消或选项错误。[I_3003]\n"
     #define w0031 "操作成功。\n"
+    #define w0032 "文件已删除。[I_4042]\n"
+    #define w0033 "文件删除失败。[E_4041]\n"
+    #define w0034 "你确定要删除日志文件吗？(y/n)\n"
 #endif     //SHARKCALCULATOR_TEXTS_H
