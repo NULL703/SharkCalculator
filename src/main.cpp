@@ -1,9 +1,9 @@
 /************************************************************************
 Main program.
-Copyright (C) 2021 NULL_703. All rights reserved.
+Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.10.7  17:31
 Created by NULL_703
-Last change time on 2021.12.31  12:48
+Last change time on 2022.1.8  17:05
 ************************************************************************/
 #include "include/main.h"
 #include "include/fileopt.h"
@@ -89,7 +89,7 @@ void storageCalc()
     enum calc cmt = cadd;
     printf("%s", w0026);
     scanf("%d%c%d", &x, &op, &y);
-    setbuf(stdin, NULL);
+    while('\n' != getchar());
     if(x > resultsIndex || y > resultsIndex)
     {
         printf("%s%s%s", F_RED, w0020, NORMAL);
@@ -97,7 +97,6 @@ void storageCalc()
         commandProc();
         return;
     }
-    setbuf(stdin, NULL);
     cmt = calcOper(op);
     printf("%s%f\n", w0015, calcTypeProc(cmt, useResult(x), useResult(y)));
 }

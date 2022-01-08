@@ -1,13 +1,12 @@
 /************************************************************************
 各种公式的算法(公式库)。
-Copyright (C) 2021 NULL_703. All rights reserved.
+Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.10.7  17:39
 Created by NULL_703
-Last change time on 2021.12.24  9:23
+Last change time on 2022.1.6  11:46
 ************************************************************************/
 #include "include/formulas.h"
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
 #include <math.h>
 
@@ -85,7 +84,7 @@ int shk_rand(int max, int min)
 
 double shk_EarthDistance(double lng1, double lng2, double lat1, double lat2)
 {
-    double Earth_r = 6371.00;
+    double Earth_r = 6371.0;
     double tmp;
     double result;
     double dLng = (lng2 - lng1) * M_PI / 180;
@@ -99,24 +98,16 @@ double shk_EarthDistance(double lng1, double lng2, double lat1, double lat2)
 
 double shk_sqrt(double num)
 {
-    double tmp = num;
-    long double eps = 0.0000000001;
-    double mid = tmp / 2;
-    double min = 0.0;
-    if(num < 0)
+    double temp = 0.0;
+    double result = 1.0;
+    if(num <= 0)
+        return 0;
+    while(result != temp)
     {
-        return -0xffff;
-    }else{
-        while((num - min) > eps)
-        {
-            if(mid * mid > tmp)
-                num = mid;
-            else
-                min = mid;
-            mid = (num + min) / 2;
-        }
+        temp = result;
+        result = (result + num / result) / 2;
     }
-    return mid;
+    return result;
 }
 
 double shk_gradient(double x1, double x2, double y1, double y2)

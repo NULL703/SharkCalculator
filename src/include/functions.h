@@ -1,9 +1,9 @@
 /************************************************************************
 公式库附属的专用函数的声明。
-Copyright (C) 2021 NULL_703. All rights reserved.
+Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.11.4  19:33
 Created by NULL_703
-Last change time on 2021.12.24  9:22
+Last change time on 2022.1.8  16:59
 ************************************************************************/
 #ifndef LIBFORMULA_FUNCTIONS_H
 #define LIBFORMULA_FUNCTIONS_H
@@ -51,21 +51,40 @@ double shk_QuadraticFunction(double x, double a, double b, double c);
 int shk_NumberLevel(int x);
 //取模运算
 int shk_mod(int x, int y);
-
+//计算x的y次方根
+double shk_musqrt(double x, double y);
+//累加函数
+int shk_adder(int min, int max);
+//分数转小数
+double shk_frac(SHK_FRACTION x);
 /*End of section.*/
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 *Non math function.
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 //获取字符串大小
 int shk_strlen(const char* s);
+//判断字符串包含的是否是纯数字
+SHK_BOOL shk_IsStrNum(const char* num, SHK_BOOL intMode);
 //字符串转换为整数
-long shk_AsciiToNum(char* number);
+int shk_AsciiToNum(const char* number);
+//整数转换为字符串
+char* shk_NumToAscii(int number);
 //字符串倒置函数
 char* shk_StrInvert(const char* str);
 //十进制转换为二进制
 SHK_BINARY shk_DecToBin(int decNum);
 //二进制转换为十进制
 int shk_BinToDec(const char* origbin);
+/*---------------------------------------------------------------------*/
+//二进制逻辑运算(函数组主函数)
+SHK_BINARY shk_BitCalc(const SHK_BINARY bin1, const SHK_BINARY bin2, int calcMode);
+//二进制与运算(函数组引导函数)
+SHK_BINARY shk_BitAnd(const SHK_BINARY bin1, const SHK_BINARY bin2);
+//二进制或运算(函数组引导函数)
+SHK_BINARY shk_BitOr(const SHK_BINARY bin1, const SHK_BINARY bin2);
+/*---------------------------------------------------------------------*/
+//二进制取反运算
+SHK_BINARY shk_BitNot(const SHK_BINARY bin);
 /*End of section.*/
 #ifdef __cplusplus
 }

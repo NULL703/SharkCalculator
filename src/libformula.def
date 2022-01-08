@@ -30,8 +30,8 @@ EXPORTS
     PTL                        @27
     shk_ang2rad                @28
     shk_abs                    @29
-    shk_lowsin                 @30
-    shk_lowexp                 @31
+    shk_ipv4AddressType        @30
+    shk_netAddress             @31
     shk_cexp                   @32
     shk_pow                    @33
     shk_IsOdd                  @34
@@ -43,5 +43,12 @@ EXPORTS
     shk_AsciiToNum             @40
     shk_StrInvert              @41
     shk_DecToBin               @42
-    shk_ipv4AddressType        @43
-    shk_netAddress             @44
+    shk_IsStrNum               @43
+    shk_NumToAscii             @44
+    shk_adder                  @45
+    shk_BitCalc                @46
+    shk_BitAnd                 @47
+    shk_BitOr                  @48
+    shk_BitNot                 @49
+    shk_musqrt                 @50
+    shk_frac                   @51

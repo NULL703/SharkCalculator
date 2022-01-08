@@ -1,9 +1,9 @@
 /************************************************************************
 公式库附属的专用函数。
-Copyright (C) 2021 NULL_703. All rights reserved.
+Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.11.4  19:31
 Created by NULL_703
-Last change time on 2021.12.31  14:48
+Last change time on 2022.1.8  16:55
 ************************************************************************/
 #include "include/functions.h"
 #include <math.h>
@@ -16,6 +16,21 @@ double shk_ang2rad(double angle)
 double shk_abs(double number)
 {
     return number > 0 ? number : -number;
+}
+
+double shk_musqrt(double x, double y)
+{
+    double temp = x;
+    double result;
+    if(x == 0)
+        return 0;
+    result = ((y - 1) * temp / y) + (x / (pow(temp, y - 1) * y));
+    while(shk_abs(result - temp) > 1e-8)
+    {
+        temp = result;
+        result = ((y - 1) * temp / y) + (x / (pow(temp, y - 1) * y));
+    }
+    return result;
 }
 
 double shk_pow(double x, int y)
@@ -44,7 +59,7 @@ int shk_strlen(const char* s)
 
 SHK_BOOL shk_IsOdd(int x)
 {
-    return (x / 2 == 0) ? SHK_FALSE : SHK_TRUE;
+    return (shk_mod(x, 2) == 0) ? SHK_FALSE : SHK_TRUE;
 }
 
 SHK_BOOL shk_Isfint(double x)
@@ -61,7 +76,7 @@ int shk_NumberLevel(int x)
 {
     int result;
     int stdNum = 10;
-    for(result = 1; stdNum > x; result++)
+    for(result = 1; stdNum < x; result++)
         stdNum *= 10;
     return result;
 }
@@ -69,26 +84,6 @@ int shk_NumberLevel(int x)
 int shk_mod(int x, int y)
 {
     return x - ((int)(x / y) * y);
-}
-
-long shk_AsciiToNum(char* number)
-{
-    int numBit = 0;
-    long result = 0;
-    numBit = shk_strlen(number);
-    if(numBit >= 10)
-        return 0xffff;
-    for(int i = 0; i < numBit; i++)
-        result += (number[i] - 48) * (shk_pow(10, numBit - i) / 10);
-    return result;
-}
-
-int shk_adder(int min, int max)
-{
-    int result = min;
-    for(int i = 0; i < max - min; i++)
-        result += min + (i + 1);
-    return result;
 }
 
 SHK_BOOL shk_IsStrNum(const char* num, SHK_BOOL intMode)
@@ -110,6 +105,42 @@ SHK_BOOL shk_IsStrNum(const char* num, SHK_BOOL intMode)
         }
     }
     return SHK_TRUE;
+}
+
+int shk_AsciiToNum(const char* number)
+{
+    int numBit = 0;
+    int result = 0;
+    numBit = shk_strlen(number);
+    if(numBit >= 10 || shk_IsStrNum(number, SHK_TRUE) == SHK_FALSE)
+        return 0xffff;
+    for(int i = 0; i < numBit; i++)
+        result += (number[i] - 48) * (shk_pow(10, numBit - i) / 10);
+    return result;
+}
+
+char* shk_NumToAscii(int number)
+{
+    static char result[9];
+    int temp = number;
+    if(shk_NumberLevel(number) > 9)
+        return "!NEQ";
+    for(int i = 0; i < 9; ++i)
+    {
+        if(i == shk_NumberLevel(number))
+            break;
+        result[i] = shk_mod(temp, 10) + 48;
+        temp /= 10;
+    }
+    return shk_StrInvert(result);
+}
+
+int shk_adder(int min, int max)
+{
+    int result = min;
+    for(int i = 0; i < max - min; i++)
+        result += min + (i + 1);
+    return result;
 }
 
 char* shk_StrInvert(const char* str)
@@ -154,19 +185,62 @@ int shk_BinToDec(const char* origbin)
     return result;
 }
 
-SHK_BINARY shk_BitAnd(const SHK_BINARY bin1, const SHK_BINARY bin2)
+SHK_BINARY shk_BitCalc(const SHK_BINARY bin1, const SHK_BINARY bin2, int calcMode)
 {
     static char result[0x100];
-    if(shk_strlen(bin1) != shk_strlen(bin2))
+    if((shk_strlen(bin1) != shk_strlen(bin2)) || shk_strlen(bin1) > 0x100 || shk_strlen(bin2) > 0x100)
         return "!NEQ";
     for(int i = 0; i <= 0x100; ++i)
     {
-        if(bin1[i] < 48 || bin2[i] < 48 || bin1[i] > 49 || bin2[i] > 49)
-            return "!NOB";
-        if(bin1[i] == bin2[i])
-            result[i] = '1';
-        else
-            result[i] = '0';
+        if((int)bin1[i] < 48 || (int)bin2[i] < 48 || (int)bin1[i] > 49 || (int)bin2[i] > 49)
+            return result;
+        if(calcMode == 0)     //与运算
+        {
+            if(bin1[i] == '1' && bin2[i] == '1')
+                result[i] = '1';
+            else
+                result[i] = '0';
+        }else if(calcMode == 1){     //或运算
+            if(bin1[i] == '1' || bin2[i] == '1')
+                result[i] = '1';
+            else
+                result[i] = '0';
+        }else
+            return "!OPE";
     }
     return result;
+}
+
+SHK_BINARY shk_BitAnd(const SHK_BINARY bin1, const SHK_BINARY bin2)
+{
+    return shk_BitCalc(bin1, bin2, 0);
+}
+
+SHK_BINARY shk_BitOr(const SHK_BINARY bin1, const SHK_BINARY bin2)
+{
+    return shk_BitCalc(bin1, bin2, 1);
+}
+
+SHK_BINARY shk_BitNot(const SHK_BINARY bin)
+{
+    static char result[0x100];
+    if(shk_strlen(bin) > 0x100)
+        return "!NEQ";
+    for(int i = 0; i <= 0x100; ++i)
+    {
+        if((int)bin[i] < 48 || (int)bin[i] > 49)
+            return result;
+        if(bin[i] == '1')
+            result[i] = '0';
+        else
+            result[i] = '1';
+    }
+    return result;
+}
+
+double shk_frac(SHK_FRACTION x)
+{
+    if((int)x.numerator == 0)
+        return -0xffff;
+    return x.numerator / x.denominator;
 }
