@@ -7,8 +7,8 @@
 #include <windows.h>
 
 VS_VERSION_INFO     VERSIONINFO
-  FILEVERSION       1,0,1,5
-  PRODUCTVERSION    1,0,1,5
+  FILEVERSION       1,0,2,12
+  PRODUCTVERSION    1,0,2,12
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -24,13 +24,13 @@ BEGIN
         BLOCK "080404E4"
 		BEGIN 
 			VALUE "CompanyName",     "shcalc Developer"
-			VALUE "FileDescription", "Common formulalibrary."
-			VALUE "FileVersion",     "1.0.1.5"
+			VALUE "FileDescription", "Common formula library."
+			VALUE "FileVersion",     "1.0.2.12"
 			VALUE "InternalName",    "libformula"
-			VALUE "LegalCopyright",  "Copyright (C) 2021 NULL_703. All rights reserved."
+			VALUE "LegalCopyright",  "Copyright (C) 2021-2022 NULL_703. All rights reserved."
 			VALUE "OriginalFilename","libformula.dll"
 			VALUE "ProductName",     "libformula"
-			VALUE "ProductVersion",  "1.0.1.5"
+			VALUE "ProductVersion",  "1.0.2.12"
 		END
 	END
 	BLOCK "VarFileInfo" 

@@ -1,14 +1,14 @@
 /************************************************************************
 程序文本(English)。
-Copyright (C) 2021 NULL_703. All rights reserved.
+Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.10.7  17:37
 Created by NULL_703
-Last change time on 2021.12.25  9:23
+Last change time on 2022.1.24  19:31
 ************************************************************************/
 #ifndef SHARKCALCULATOR_TEXTS_H
 #define SHARKCALCULATOR_TEXTS_H
-    #define w0001 "SharkCalculator v1.0.2, Copyright (C) NULL_703. All rights reserved.\n"\
-        "Usage: shcalc {options: [<none option>] [-<calculate flag>] [-n] [-h] [--bh] [--basic] [--storage]} {nums} ...\n"\
+    #define w0001 "SharkCalculator v1.0.2, Copyright (C) 2021-2022 NULL_703. All rights reserved.\n"\
+        "Usage: shcalc {options: [<none option>] [-<calculate flag>] [-n] [-h] [-v] [--bh] [--basic] [--storage] [--version]} {nums} ...\n"\
         "Mainly option:\n"\
         "    [<none option>]: Use internal command.(for no option)\n"\
         "    [-<calculate flag>]: Calculate same formulas or expression.\n"\
@@ -17,8 +17,9 @@ Last change time on 2021.12.25  9:23
         "    [--bh]: Show basic help.\n"\
         "    [--basic]: Basic calculate mode.\n"\
         "    [--storage]: Open storage mode.\n"\
-        "    [--cleanlog]: Delete logger file.\n"\
-        "Program internal command: [n] [b] [l] [h] [s] [u] [e] [q] [c]\n"\
+        "    [--cleanlog]: Delete logfile.\n"\
+        "    [--version] [-v]: Show version infomation.\n"\
+        "Program internal command: [n] [b] [l] [h] [s] [u] [e] [q] [c] [v]\n"\
         "    n: Use normal calculate mode.\033[0;32;31m <Not open>\033[m\n"\
         "    b: Basic calculate mode.\n"\
         "    l: Save calculate result.\033[0;32;31m <Not open>\033[m\n"\
@@ -28,7 +29,8 @@ Last change time on 2021.12.25  9:23
         "    e: Exit program.\n"\
         "    q: Lookup the data in the result-pool.\n"\
         "    c: Clean the data in the result-pool.\n"\
-        "    d: Delete logger file and exit program.\n"
+        "    d: Delete logfile and exit program.\n"\
+        "    v: Show version infomation.\n"
     #define w0002 "Please input command:\n-->"
     #define w0003 "\aError: Cannot be divided by 0![E_1001]\n"
     #define w0004 "\aError: Invalid parameter![E_2001]\n"
@@ -61,5 +63,7 @@ Last change time on 2021.12.25  9:23
     #define w0031 "Opertion succeed.\n"
     #define w0032 "The file have been delete.[I_4042]\n"
     #define w0033 "\aError: The file delete failed.[E_4041]\n"
-    #define w0034 "Are you delete logger file?(y/n)\n"
+    #define w0034 "Are you delete logfile?(y/n)\n"
+    #define w0035 "The all data in below:\n"
+    #define w0036 "Result-pool utilization rate:\n"
 #endif     //SHARKCALCULATOR_TEXTS_H

@@ -3,67 +3,80 @@ Main program.
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.10.7  17:31
 Created by NULL_703
-Last change time on 2022.1.8  17:05
+Last change time on 2022.1.24  19:13
 ************************************************************************/
 #include "include/main.h"
 #include "include/fileopt.h"
 
-static double results[255];
-static int resultsIndex = 0;
-static SHK_BOOL storageModeSwitch = SHK_FALSE;
+static double results[255];    //存储池最大数据量为255
+static int resultsIndex = 0;    //存储池数据写入的指针位置(存储池数据索引最大值)
+static SHK_BOOL storageModeSwitch = SHK_FALSE;    //存储模式状态
 
-class resultLookup{
-    public:
-    void selectLookupMode()
+void resultLookup::selectLookupMode()
+{
+    char mode;
+    int par = 0;
+    printf("%s%s%s", F_LIGHT_BLUE, w0027, NORMAL);
+    scanf("%c", &mode);
+    while('\n' != getchar());
+    if(mode == 's')
     {
-        char mode;
-        int par = 0;
-        printf("%s%s%s", F_LIGHT_BLUE, w0027, NORMAL);
-        scanf("%c", &mode);
+        printf("%s%s%s", F_LIGHT_CYAN, w0028, NORMAL);
+        scanf("%d", &par);
         while('\n' != getchar());
-        if(mode == 's')
-        {
-            printf("%s%s%s", F_LIGHT_CYAN, w0028, NORMAL);
-            scanf("%d", &par);
-            while('\n' != getchar());
-            printf("%s%s%f%s\n", F_LIGHT_GREEN, w0029, getResult(par), NORMAL);
-        }else if(mode == 'a'){
-            printf("%s%s%s", F_LIGHT_CYAN, w0028, NORMAL);
-            scanf("%d", &par);
-            while('\n' != getchar());
-            showAllResult(par);
-        }else{
-            printf("%s%s%s", F_RED, w0008, NORMAL);
-            configLog(6, __LINE__, __FILE__, __FUNCTION__);
-        }
+        showStorageStatus();
+        printf("%s%s%f%s\n", F_LIGHT_GREEN, w0029, getResult(par), NORMAL);
+    }else if(mode == 'a'){
+        printf("%s%s%s", F_LIGHT_CYAN, w0028, NORMAL);
+        scanf("%d", &par);
+        while('\n' != getchar());
+        showAllResult(par);
+    }else{
+        printf("%s%s%s", F_RED, w0008, NORMAL);
+        configLog(6, __LINE__, __FILE__, __FUNCTION__);
     }
+}
 
-    double getResult(int index)
-    {
-        if(index >= resultsIndex)
-            return showErrorInfo();
-        return results[index];
-    }
+double resultLookup::getResult(int index)
+{
+    if(index >= resultsIndex)
+        return showErrorInfo();
+    return results[index];
+}
 
-    void showAllResult(int maxResultNumber)
+void resultLookup::showAllResult(int maxResultNumber)
+{
+    showStorageStatus();
+    if(maxResultNumber >= resultsIndex)
     {
-        if(maxResultNumber >= resultsIndex)
-        {
-            showErrorInfo();
-            return;
-        }
-        for(int i = 0; i <= maxResultNumber; i++)
-            printf("%s%d\t%f%s\n", F_LIGHT_GREEN, i, results[i], NORMAL);
+        showErrorInfo();
+        printf("%s", w0035);
+        maxResultNumber = resultsIndex - 1;
     }
+    for(int i = 0; i <= maxResultNumber; i++)
+        printf("%s%d\t%f%s\n", F_LIGHT_GREEN, i, results[i], NORMAL);
+    if(resultsIndex - 1 < 0)
+        printf("%s<None>\n%s", F_LIGHT_GREEN, NORMAL);
+}
 
-    private:
-    int showErrorInfo()
-    {
-        printf("%s%s%s", F_RED, w0020, NORMAL);
-        configLog(4, __LINE__, __FILE__, __FUNCTION__);
-        return 0;
-    }
-};
+int resultLookup::showErrorInfo()
+{
+    printf("%s%s%s", F_RED, w0020, NORMAL);
+    configLog(4, __LINE__, __FILE__, __FUNCTION__);
+    return 0;
+}
+
+void resultLookup::showStorageStatus()
+{
+    int units = (resultsIndex * 100) / 255;
+    int diff = 100 - units;
+    printf("%s%s[", F_LIGHT_BLUE, w0036);
+    for(int i = 0; i < units; i++)
+        printf("|");
+    for(int j = 0; j < diff; j++)
+        printf(".");
+    printf("]%.2f%c%s\n", (resultsIndex * 100) / 255.0, '%', NORMAL);
+}
 
 void normalCalc()
 {
@@ -76,7 +89,7 @@ double useResult(int resultNumber)
     if(resultNumber >= resultsIndex)
     {
         printf("%s%s%s", F_RED, w0020, NORMAL);
-        configLog(0, __LINE__, __FILE__, __FUNCTION__);
+        configLog(4, __LINE__, __FILE__, __FUNCTION__);
         return 0.0;
     }
     return results[resultNumber];
@@ -90,7 +103,7 @@ void storageCalc()
     printf("%s", w0026);
     scanf("%d%c%d", &x, &op, &y);
     while('\n' != getchar());
-    if(x > resultsIndex || y > resultsIndex)
+    if(x >= resultsIndex || y >= resultsIndex)
     {
         printf("%s%s%s", F_RED, w0020, NORMAL);
         configLog(4, __LINE__, __FILE__, __FUNCTION__);
@@ -178,11 +191,12 @@ int basicCalculate()
     result = calcTypeProc(calculateMethod, numx, numy);
     if(storageModeSwitch == SHK_TRUE)
     {
-        if(resultsIndex >= 0xff)     //超过255个计算结果时将索引值重置为0
+        if(resultsIndex > 0xff)     //超过255个计算结果时将索引值重置为0
         {
             printf("%s%s%s", F_YELLOW, w0021, NORMAL);
             resultsIndex = 0;
             configLog(2, __LINE__, __FILE__, __FUNCTION__);
+            results[resultsIndex] = result;
         }
         results[resultsIndex] = result;
         resultsIndex += 1;
@@ -269,6 +283,8 @@ void commandProc()
         }
     }else if(command == 'd'){
         deleteFile("ProgramLog.log");
+    }else if(command == 'v'){
+        printf("%s", versioninfo);
     }else{
         printf("%s%s%s", F_RED, w0008, NORMAL);
         configLog(6, __LINE__, __FILE__, __FUNCTION__);
@@ -310,6 +326,10 @@ int main(int argc, const char** argv)
             commandProc();
         }else if(strcmp(argv[1], "--cleanlog") == 0){
             deleteFile("ProgramLog.log");
+            return 0;
+        }else if(strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-v") == 0){
+            printf("%s", versioninfo);
+            configLog(0, __LINE__, __FILE__, __FUNCTION__);
             return 0;
         }else{
             printf("%s%s%s%s", F_RED, w0004, NORMAL, w0017);

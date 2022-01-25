@@ -1,9 +1,9 @@
 #************************************************************************
 # Makefile(Version is Linux).
-# Copyright (C) 2021 NULL_703. All rights reserved.
+# Copyright (C) 2021-2022 NULL_703. All rights reserved.
 # Created on 2021.10.7  17:40
 # Created by NULL_703
-# Last change time on 2021.12.23  12:01
+# Last change time on 2022.1.3  11:32
 #*************************************************************************
 cpp = g++
 gc = gcc
@@ -11,10 +11,11 @@ cflag = -O2 -std=c99 -Wall -s -c
 flag = -O2 -std=c++11 -Wall -s -c
 AsmFlag = -S -O2 -std=c++11 -Wall
 AsmCflag = -S -O2 -std=c99 -Wall
-asms = main.asm calculate.asm formulas.asm functions.asm network.asm
+cppasms = main.asm calculate.asm fileopt.asm
+casms = formulas.asm functions.asm network.asm phyformula.asm
 bin = shcalc
-obj = main.o calculate.o
-Lobj = formulas.o functions.o network.o
+obj = main.o calculate.o fileopt.o
+Lobj = formulas.o functions.o network.o phyformula.o
 lib = libformula.so
 
 all: $(bin) $(lib)
@@ -24,53 +25,38 @@ $(bin): $(obj) $(lib)
 	$(cpp) $(obj) -L. -lformula -s -o $(bin)
 	@echo "Finish!"
 
-main.o: main.cpp
-	$(cpp) $(flag) main.cpp -o main.o
-
-calculate.o: calculate.cpp
-	$(cpp) $(flag) calculate.cpp -o calculate.o
+%.o: %.cpp
+	$(cpp) $(flag) $<
 
 $(lib): $(Lobj)
 	@echo "Build libformula..."
 	$(gc) $(Lobj) -shared -s -o $(lib)
 	@echo "Finish!"
 
-formulas.o: formulas.c
-	$(gc) $(cflag) -fPIC formulas.c -o formulas.o
-
-network.o: network.c
-	$(gc) $(cflag) -fPIC network.c -o network.o
-
-functions.o: functions.c
-	$(gc) $(cflag) -fPIC functions.c -o functions.o
+%.o: %.c
+	$(gc) $(cflag) -fPIC $<
 
 .PHONY: asm
-asm: $(asms)
+asm: $(casms) $(cppasms)
 	@echo "Createing assembly file..."
 	mkdir assembly
-	mv $(asms) assembly
+	mv "*.s" "assembly"
 	@echo "Finish!"
-	@echo "Tips: All assembly code into folodr assembly."
-main.asm: main.cpp
-	$(cpp) $(AsmFlag) main.cpp -o main.asm
+	@echo "Tips: All assembly code into folder assembly."
 
-calculate.asm: calculate.cpp
-	$(cpp) $(AsmFlag) calculate.cpp -o calculate.asm
+$(cppasms):
+%.asm: %.cpp
+	$(cpp) $(AsmFlag) $<
 
-formulas.asm: formulas.c
-	$(gc) $(AsmCflag) formulas.c -o formulas.asm
-
-functions.asm: functions.c
-	$(gc) $(AsmCflag) functions.c -o functions.asm
-
-network.asm: network.c
-	$(gc) $(AsmCflag) network.c -o network.asm
+$(casms):
+%.asm: %.c
+	$(gc) $(AsmCflag) $<
 
 .PHONY: help
 help:
 	@echo "********************Makefile usage********************"
-	@echo "Copyright (C) 2021 NULL_703, All rights reserved."
-	@echo "Welcome use Makefile(Linux version)! The usage in bolow:"
+	@echo "Copyright (C) 2021-2022 NULL_703. All rights reserved."
+	@echo "Welcome use Makefile(Linux version)! The usage in below:"
 	@echo "make: build source code.(for default)"
 	@echo "make clean: remove all binary file."
 	@echo "make help: show help."
@@ -90,7 +76,7 @@ move:
 .PHONY: clean
 clean:
 	@echo "Deleting all non source code file..."
-	-rm -f *.o *.asm $(bin) $(lib)
+	-rm -f *.o *.asm *.s $(bin) $(lib)
 	-rm -fr ./binary ./assembly
 	@echo "Finish!"
 
