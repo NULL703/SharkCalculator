@@ -3,14 +3,40 @@ Main program.
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.10.7  17:31
 Created by NULL_703
-Last change time on 2022.1.24  19:13
+Last change time on 2022.2.28  13:15
 ************************************************************************/
 #include "include/main.h"
-#include "include/fileopt.h"
 
-static double results[255];    //存储池最大数据量为255
-static int resultsIndex = 0;    //存储池数据写入的指针位置(存储池数据索引最大值)
-static SHK_BOOL storageModeSwitch = SHK_FALSE;    //存储模式状态
+#define infcmdCount 13
+#define progcmdCount 9
+
+//内部命令
+char infcmds[infcmdCount][0x20] = {
+    "n", "b", "l", "h", "s", "u", "e", "q", "c", "v", "d", "insert", "setindex"
+};
+
+//程序选项
+char progcmds[progcmdCount][0x20] = {
+    "", "-n", "-h", "--bh", "--basic", "--storage", "--cleanlog", "--version",
+    "-v"
+};
+
+//命令匹配，命令类型为0时为内部命令，类型为1时为程序命令
+int commandMarch(const char* command, int cmdtype)
+{
+    int cmdindex = 0;
+    while(cmdindex != 15)
+    {
+        if(cmdtype == 0)
+        {
+            if(strcmp(command, infcmds[cmdindex]) == 0) break;
+        }else{
+            if(strcmp(command, progcmds[cmdindex]) == 0) break;
+        }
+        cmdindex++;
+    }
+    return cmdindex;
+}
 
 void resultLookup::selectLookupMode()
 {
@@ -78,6 +104,21 @@ void resultLookup::showStorageStatus()
     printf("]%.2f%c%s\n", (resultsIndex * 100) / 255.0, '%', NORMAL);
 }
 
+SHK_BOOL getStorageStatus()
+{
+    return storageModeSwitch;
+}
+
+int getResultsIndex()
+{
+    return resultsIndex;
+}
+
+double getResultsValue(int index)
+{
+    return results[index];
+}
+
 void normalCalc()
 {
     //TODO:常规计算将在后续版本开放
@@ -118,28 +159,23 @@ enum calc calcOper(char oper)
 {
     switch(oper)
     {
-        case '+':
-        {
+        case '+': {
             return cadd;
             break;
         }
-        case '-':
-        {
+        case '-': {
             return csub;
             break;
         }
-        case '*':
-        {
+        case '*': {
             return cmul;
             break;
         }
-        case '/':
-        {
+        case '/': {
             return cdiv;
             break;
         }
-        default:
-        {
+        default: {
             printf("%s%s%s", F_RED, w0016, NORMAL);
             return err;
         }
@@ -148,9 +184,9 @@ enum calc calcOper(char oper)
 
 int basicCalculate()
 {
-    char expr[1024] = "";
-    char exprElement1[1024] = {};
-    char exprElement2[1024] = {};
+    char expr[0xff] = "";
+    char exprElement1[0xff] = {};
+    char exprElement2[0xff] = {};
     char oper = 0;
     int flagNumber = 0;
     double result = 0.0, numx = 0.0, numy = 0.0;
@@ -213,7 +249,7 @@ void cleanResult()
     while('\n' != getchar());
     if(choose == 'y' || choose == 'Y')
     {
-        resultsIndex = 0;
+        resultsIndex = 0;    //清除存储池数据的实际原理是重置存储池索引指针，然后从零开始覆写数据
         printf("%s%s%s", F_LIGHT_BLUE, w0031, NORMAL);
     }else{
         printf("%s%s%s", F_LIGHT_BLUE, w0030, NORMAL);
@@ -221,76 +257,191 @@ void cleanResult()
     }
 }
 
+void resultPoolInsert()
+{
+    char number[0x20];
+    while(strcmp(number, "quit") != 0)
+    {
+        //存储池溢出检测
+        if(resultsIndex + 1 > 0xff)
+        {
+            printf("%s%s%s", F_BLUE, w0040, NORMAL);
+            if(getchar() == 'y' || getchar() == 'Y')
+            {
+                printf("%s%s%s", F_YELLOW, w0021, NORMAL);
+                resultsIndex = 0;    //重置索引指针
+                configLog(2, __LINE__, __FILE__, __FUNCTION__);
+            }else{
+                printf("%s%s%s", F_LIGHT_BLUE, w0030, NORMAL);
+                return;
+            }
+        }
+        printf("%s%sindex:%d -->%s", F_LIGHT_BLUE, w0038, resultsIndex, NORMAL);
+        scanf("%s", number);
+        while('\n' != getchar());
+        if(strcmp(number, "quit") == 0)
+            break;
+        results[resultsIndex] = atof(number);
+        resultsIndex++;
+    }
+}
+
+void setStorageIndex()
+{
+#ifdef DEBUG
+    int newIndex = 0;
+    printf("%s%s%s", F_LIGHT_BLUE, w0028, NORMAL);
+    scanf("%d", &newIndex);
+    while('\n' != getchar());
+    if(newIndex > 0xff || newIndex < 0)
+    {
+        printf("%s%s%s", F_RED, w0004, NORMAL);
+        return;
+    }
+    resultsIndex = newIndex;
+#else
+    printf("%s%s%s", F_RED, w0042, NORMAL);
+#endif
+}
+
 void commandProc()
 {
-    char command;
+    char command[0xff];
     resultLookup lookup;
     printf("%s", w0002);
-    scanf("%c", &command);
+    scanf("%s", command);
     while('\n' != getchar());
-    if(command == 'n')
+    switch(commandMarch(command, 0))
     {
-        printf("%s%s%s", F_RED, w0014, NORMAL);
-        commandProc();
-    }else if(command == 'b'){
-        basicCalculate();
-        commandProc();
-    }else if(command == 'h'){
-        printf("%s%s%s  %s", w0001, w0022, __DATE__, __TIME__);
-        commandProc();
-    }else if(command == 'l'){
-        printf("%s%s%s", F_RED, w0014, NORMAL);
-        commandProc();
-    }else if(command == 's'){
-        if(storageModeSwitch == SHK_FALSE)
-        {
-            printf("%s%s%s", F_LIGHT_BLUE, w0023, NORMAL);
-            storageModeSwitch = SHK_TRUE;
-            commandProc();
-        }else{
-            printf("%s%s%s", F_LIGHT_BLUE, w0024, NORMAL);
-            storageModeSwitch = SHK_FALSE;
-            commandProc();
+        //常规计算模式
+        case 0: printf("%s%s%s", F_RED, w0014, NORMAL); break;
+        //简单计算模式
+        case 1: basicCalculate(); break;
+        //保存结果
+        case 2: saveResult(); break;
+        //显示帮助
+        case 3: printf("%s%s%s  %s\n", w0001, w0022, __DATE__, __TIME__); break;
+        //打开或关闭存储模式
+        case 4: {
+            if(storageModeSwitch == SHK_FALSE)
+            {
+                printf("%s%s%s", F_LIGHT_BLUE, w0023, NORMAL);
+                storageModeSwitch = SHK_TRUE;
+            }else{
+                printf("%s%s%s", F_LIGHT_BLUE, w0024, NORMAL);
+                storageModeSwitch = SHK_FALSE;
+            }
+            break;
         }
-    }else if(command == 'u'){
-        if(storageModeSwitch == SHK_TRUE && resultsIndex >= 1)
-        {
-            storageCalc();
-            commandProc();
-        }else{
-            printf("%s%s%s", F_YELLOW, w0025, NORMAL);
-            configLog(4, __LINE__, __FILE__, __FUNCTION__);
-            commandProc();
+        //使用存储池的数据进行计算
+        case 5: {
+            if(storageModeSwitch == SHK_TRUE && resultsIndex >= 1)
+            {
+                storageCalc();
+            }else{
+                printf("%s%s%s", F_YELLOW, w0025, NORMAL);
+                configLog(4, __LINE__, __FILE__, __FUNCTION__);
+            }
+            break;
         }
-    }else if(command == 'e'){
-        configLog(0, __LINE__, __FILE__, __FUNCTION__);
-        exit(0);
-    }else if(command == 'q'){
-        if(storageModeSwitch == SHK_TRUE)
-            lookup.selectLookupMode();
-        else{
-            printf("%s%s%s", F_RED, w0019, NORMAL);
-            configLog(4, __LINE__, __FILE__, __FUNCTION__);
+        //退出程序
+        case 6: {
+            configLog(0, __LINE__, __FILE__, __FUNCTION__);
+            exit(0);
+            break;
         }
-        commandProc();
-    }else if(command == 'c'){
-        if(storageModeSwitch == SHK_TRUE)
-        {
-            cleanResult();
-            commandProc();
-        }else{
-            printf("%s%s%s", F_RED, w0019, NORMAL);
+        //查找存储池的数据
+        case 7: {
+            if(storageModeSwitch == SHK_TRUE)
+                lookup.selectLookupMode();
+            else{
+                printf("%s%s%s", F_RED, w0019, NORMAL);
+                configLog(4, __LINE__, __FILE__, __FUNCTION__);
+            }
+            break;
         }
-    }else if(command == 'd'){
-        deleteFile("ProgramLog.log");
-    }else if(command == 'v'){
-        printf("%s", versioninfo);
-    }else{
-        printf("%s%s%s", F_RED, w0008, NORMAL);
-        configLog(6, __LINE__, __FILE__, __FUNCTION__);
-        commandProc(); 
+        //清除存储池的所有数据
+        case 8: {
+            if(storageModeSwitch == SHK_TRUE)
+            {
+                cleanResult();
+            }else{
+                printf("%s%s%s", F_RED, w0019, NORMAL);
+            }
+            break;
+        }
+        //显示版本信息
+        case 9: printf("%s", versioninfo); break;
+        //删除日志文件
+        case 10: deleteFile(); break;
+        //插入数据到存储池中
+        case 11: {
+            if(storageModeSwitch == SHK_TRUE)
+            {
+                resultPoolInsert();
+            }else{
+                printf("%s%s%s", F_RED, w0019, NORMAL);
+            }
+            break;
+        }
+        //设置存储池索引指针
+        case 12: setStorageIndex(); break;
+        default: {
+            printf("%s%s%s", F_RED, w0008, NORMAL);
+            configLog(6, __LINE__, __FILE__, __FUNCTION__);
+        }
     }
     commandProc();
+}
+
+int argCommandExec(const char** argv)
+{
+    switch(commandMarch(argv[1], 1))
+    {
+        case 0: commandProc(); break;
+        //常规计算模式
+        case 1: {
+            printf("%s%s%s", F_RED, w0014, NORMAL);
+            return 1;
+            break;
+        }
+        //打开文档
+        case 2: {
+            printf("%s%s%s", F_RED, w0014, NORMAL);
+            return 1;
+            break;
+        }
+        //显示帮助
+        case 3: printf("%s%s%s  %s\n", w0001, w0022, __DATE__, __TIME__); break;
+        //简单计算模式
+        case 4: {
+            if(basicCalculate() != 0)
+                printf("%s%s%s", F_RED, w0013, NORMAL);
+            commandProc();
+        }
+        //进入程序时开启存储模式
+        case 5: {
+            storageModeSwitch = SHK_TRUE;
+            commandProc();
+            break;
+        }
+        //生成日志文件
+        case 6: deleteFile(); break;
+        //显示版本信息
+        case 7: 
+        case 8: {
+            printf("%s", versioninfo);
+            configLog(0, __LINE__, __FILE__, __FUNCTION__);
+            break;
+        }
+        default: {
+            printf("%s%s%s%s", F_RED, w0004, NORMAL, w0017);
+            printf("%s%s%s  %s\n", w0001, w0022, __DATE__, __TIME__);
+            configLog(8, __LINE__, __FILE__, __FUNCTION__);
+            commandProc();
+        }
+    }
+    return 0;
 }
 
 int main(int argc, const char** argv)
@@ -308,35 +459,7 @@ int main(int argc, const char** argv)
         configLog(8, __LINE__, __FILE__, __FUNCTION__);
         commandProc();
     }else{
-        if(strcmp(argv[1], "-n") == 0){
-            printf("%s%s%s", F_RED, w0014, NORMAL);
-            return 1;
-        }else if(strcmp(argv[1], "-h") == 0){
-            printf("%s%s%s", F_RED, w0014, NORMAL);
-            return 1;
-        }else if(strcmp(argv[1], "--bh") == 0){
-            printf("%s%s%s  %s", w0001, w0022, __DATE__, __TIME__);
-            return 0;
-        }else if(strcmp(argv[1], "--basic") == 0){
-            if(basicCalculate() != 0)
-                printf("%s%s%s", F_RED, w0013, NORMAL);
-            commandProc();
-        }else if(strcmp(argv[1], "--storage") == 0){
-            storageModeSwitch = SHK_TRUE;
-            commandProc();
-        }else if(strcmp(argv[1], "--cleanlog") == 0){
-            deleteFile("ProgramLog.log");
-            return 0;
-        }else if(strcmp(argv[1], "--version") == 0 || strcmp(argv[1], "-v") == 0){
-            printf("%s", versioninfo);
-            configLog(0, __LINE__, __FILE__, __FUNCTION__);
-            return 0;
-        }else{
-            printf("%s%s%s%s", F_RED, w0004, NORMAL, w0017);
-            printf("%s%s%s  %s\n", w0001, w0022, __DATE__, __TIME__);
-            configLog(8, __LINE__, __FILE__, __FUNCTION__);
-            commandProc();
-        }
+        return argCommandExec(argv);
     }
     printf("%s%s%s", F_RED, w0007, NORMAL);
     configLog(-1, __LINE__, __FILE__, __FUNCTION__);

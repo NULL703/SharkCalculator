@@ -3,7 +3,7 @@
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.11.4  19:33
 Created by NULL_703
-Last change time on 2022.1.8  16:59
+Last change time on 2022.2.16  21:04
 ************************************************************************/
 #ifndef LIBFORMULA_FUNCTIONS_H
 #define LIBFORMULA_FUNCTIONS_H
@@ -76,7 +76,7 @@ SHK_BINARY shk_DecToBin(int decNum);
 //二进制转换为十进制
 int shk_BinToDec(const char* origbin);
 /*---------------------------------------------------------------------*/
-//二进制逻辑运算(函数组主函数)
+//二进制逻辑与、或运算(函数组主函数)
 SHK_BINARY shk_BitCalc(const SHK_BINARY bin1, const SHK_BINARY bin2, int calcMode);
 //二进制与运算(函数组引导函数)
 SHK_BINARY shk_BitAnd(const SHK_BINARY bin1, const SHK_BINARY bin2);

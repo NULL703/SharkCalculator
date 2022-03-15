@@ -1,9 +1,9 @@
 /************************************************************************
 formulas.c的函数声明。
-Copyright (C) 2021 NULL_703. All rights reserved.
+Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.10.7  21:39
 Created by NULL_703
-Last change time on 2021.12.24  9:23
+Last change time on 2022.3.4  10:48
 ************************************************************************/
 #ifndef LIBFORMULA_FORMULAS_H
 #define LIBFORMULA_FORMULAS_H
@@ -49,6 +49,8 @@ double CLEFS(double r, double l);
 double CLCRV(double r, double h);
 //圆柱表面积
 double CLCRS(double r, double l);
+//点到直线的距离公式
+double PTL(double epA, double epB, double epC, double x, double y);
 //浮点数随机函数
 double shk_randf(double max, double min);
 //整数随机函数
@@ -65,6 +67,31 @@ double shk_deviation(double* datas, double mean, int term);
 double shk_RootDeviantion(double* datas, double mean, int term);
 //斐波那契数列通项公式
 int shk_FibonacciSON(int n);
+//极坐标系中两点间距离的计算公式
+double shk_spaPTPF(SHK_SOPCA addr1, SHK_SOPCA addr2);
+/*---------------------------------------------------------------------*/
+//平面直角坐标系中点的平移坐标变换(函数组主函数)
+SHK_PRACSA shk_CoorSysPan(SHK_PRACSA objAddr, SHK_PRACSA newOrigPointAddr, int calcMode);
+//求平移前的坐标(函数组引导函数)
+SHK_PRACSA shk_GetOldPoint_Pan(SHK_PRACSA newAddr, SHK_PRACSA newOrigPointAddr);
+//求平移后的坐标(函数组引导函数)
+SHK_PRACSA shk_GetNewPoint_Pan(SHK_PRACSA oldAddr, SHK_PRACSA newOrigPointAddr);
+/*---------------------------------------------------------------------*/
+//平面直角坐标系中点的旋转变换(函数组主函数)
+SHK_PRACSA shk_CoorSysRev(SHK_PRACSA objAddr, double angle, int calcMode);
+//求旋转前的坐标(函数组引导函数)
+SHK_PRACSA shk_GetOldPoint_Rev(SHK_PRACSA newAddr, double angle);
+//求旋转后的坐标(函数组引导函数)
+SHK_PRACSA shk_GetNewPoint_Rev(SHK_PRACSA oldAddr, double angle);
+/*---------------------------------------------------------------------*/
+//平面直角坐标系中点的一般变换(函数组主函数)
+SHK_PRACSA shk_CoorSysNormalChange(SHK_PRACSA objAddr, SHK_PRACSA newOrigPointAddr, double angle,
+                                int calcMode);
+//求原坐标
+SHK_PRACSA shk_GetOldPoint_NC(SHK_PRACSA newAddr, SHK_PRACSA newOrigPointAddr, double angle);
+//求新坐标
+SHK_PRACSA shk_GetNewPoint_NC(SHK_PRACSA oldAddr, SHK_PRACSA newOrigPointAddr, double angle);
+/*---------------------------------------------------------------------*/
 /*End of section.*/
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 *Section2:高等数学相关的公式和算法
@@ -76,7 +103,6 @@ double shk_EarthDistance(double lng1, double lng2, double lat1, double lat2);
 double** shk_MatrixAdd(double *InputExpr1, double *InputExpr2, int row, int col);
 //矩阵的减法
 double** shk_MatrixSub(double *InputExpr1, double *InputExpr2, int row, int col);
-
 /*End of section.*/
 #ifdef __cplusplus
 }

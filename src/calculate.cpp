@@ -1,13 +1,28 @@
 /************************************************************************
 基本计算方法。
-Copyright (C) 2021 NULL_703. All rights reserved.
+Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.11.29  16:17
 Created by NULL_703
-Last change time on 2021.12.4  19:50
+Last change time on 2022.3.6  11:46
 ************************************************************************/
 #include "include/calculate.h"
-#include "include/fileopt.h"
-#include "include/main.h"
+
+#define calcoptCount 11
+char calcopt[calcoptCount][0x14] = {
+    "-abs", "-pow", "-ang2rad", "-add", "-sub", "-mul", "-div", "-dectobin",
+    "-bintodec", "-sqrt", "-musqrt"
+};
+
+int optMatch(const char* opt)
+{
+    int optindex = 0;
+    while(optindex != 15)
+    {
+        if(strcmp(opt, calcopt[optindex]) == 0) break;
+        optindex++;
+    }
+    return optindex;
+}
 
 void formulaErrno(int count, const char**argv)
 {
@@ -24,37 +39,81 @@ void formulaErrno(int count, const char**argv)
 
 void immediateCalculate(int argc, const char** argv)
 {
-    if(argc > 1 && (strcmp(argv[1], "-abs") == 0))
+    switch(optMatch(argv[1]))
     {
-        formulaErrno(2, argv);
-        printf("%s%f", w0015, shk_abs(atof(argv[2])));
-    }else if(argc > 1 && (strcmp(argv[1], "-pow") == 0)){
-        formulaErrno(3, argv);
-        printf("%s%f", w0015, shk_pow(atof(argv[2]), atof(argv[3])));
-    }else if(argc > 1 && (strcmp(argv[1], "-ang2rad") == 0)){
-        formulaErrno(2, argv);
-        printf("%s%f", w0015, shk_ang2rad(atof(argv[2])));
-    }else if(argc > 1 && (strcmp(argv[1], "-add") == 0)){
-        formulaErrno(3, argv);
-        printf("%s%f", w0015, calcTypeProc(cadd, atof(argv[2]), atof(argv[3])));
-    }else if(argc > 1 && (strcmp(argv[1], "-sub") == 0)){
-        formulaErrno(3, argv);
-        printf("%s%f", w0015, calcTypeProc(csub, atof(argv[2]), atof(argv[3])));
-    }else if(argc > 1 && (strcmp(argv[1], "-mul") == 0)){
-        formulaErrno(3, argv);
-        printf("%s%f", w0015, calcTypeProc(cmul, atof(argv[2]), atof(argv[3])));
-    }else if(argc > 1 && (strcmp(argv[1], "-div") == 0)){
-        formulaErrno(3, argv);
-        printf("%s%f", w0015, calcTypeProc(cdiv, atof(argv[2]), atof(argv[3])));
-    }else if(argc > 1 && (strcmp(argv[1], "-dectobin") == 0)){
-        formulaErrno(2, argv);
-        printf("%s%s", w0015, shk_DecToBin(atof(argv[2])));
-    }else if(argc > 1 && (strcmp(argv[1], "-bintodec") == 0)){
-        formulaErrno(2, argv);
-        printf("%s%d", w0015, shk_BinToDec(argv[2]));
-    }else{
-        printf("%s%s%s", F_RED, w0016, NORMAL);
-        configLog(-1, __LINE__, __FILE__, __FUNCTION__);
+        //abs
+        case 0: {
+            formulaErrno(2, argv);
+            printf("%s%f\n", w0015, shk_abs(atof(argv[2])));
+            break;
+        }
+        //pow
+        case 1: {
+            formulaErrno(3, argv);
+            printf("%s%f\n", w0015, shk_pow(atof(argv[2]), atof(argv[3])));
+            break;
+        }
+        //ang2rad
+        case 2: {
+            formulaErrno(2, argv);
+            printf("%s%f\n", w0015, shk_ang2rad(atof(argv[2])));
+            break;
+        }
+        //add
+        case 3: {
+            formulaErrno(3, argv);
+            printf("%s%f\n", w0015, calcTypeProc(cadd, atof(argv[2]), atof(argv[3])));
+            break;
+        }
+        //sub
+        case 4: {
+            formulaErrno(3, argv);
+            printf("%s%f\n", w0015, calcTypeProc(csub, atof(argv[2]), atof(argv[3])));
+            break;
+        }
+        //mul
+        case 5: {
+            formulaErrno(3, argv);
+            printf("%s%f\n", w0015, calcTypeProc(cmul, atof(argv[2]), atof(argv[3])));
+            break;
+        }
+        //div
+        case 6: {
+            formulaErrno(3, argv);
+            printf("%s%f\n", w0015, calcTypeProc(cdiv, atof(argv[2]), atof(argv[3])));
+            break;
+        }
+        //dectobin
+        case 7: {
+            formulaErrno(2, argv);
+            printf("%s%s\n", w0015, shk_DecToBin(atof(argv[2])));
+            break;
+        }
+        //bintodec
+        case 8: {
+            formulaErrno(2, argv);
+            printf("%s%d\n", w0015, shk_BinToDec(argv[2]));
+            break;
+        }
+        //sqrt
+        case 9: {
+            formulaErrno(2, argv);
+            printf("%s%.6f\n", w0015, calcTypeProc(csqrt, atof(argv[2]), 0));
+            break;
+        }
+        //musqrt
+        case 10: {
+            formulaErrno(3, argv);
+            printf("%s%.6f\n", w0015, calcTypeProc(cmusqrt, atof(argv[2]), atof(argv[3])));
+            break;
+        }
+        default: {
+#ifdef __WIN32
+            system("cls");
+#endif
+            printf("%s%s%s", F_RED, w0016, NORMAL);
+            configLog(-1, __LINE__, __FILE__, __FUNCTION__);
+        }
     }
     configLog(0, __LINE__, __FILE__, __FUNCTION__);
     exit(0);
@@ -64,28 +123,31 @@ double calcTypeProc(enum calc calcType, double x, double y)
 {
     switch(calcType)
     {
-        case cadd:
-        {
+        case cadd: {
             return add(x, y);
             break;
         }
-        case csub:
-        {
+        case csub: {
             return sub(x, y);
             break;
         }
-        case cmul:
-        {
+        case cmul: {
             return mul(x, y);
             break;
         }
-        case cdiv:
-        {
+        case cdiv: {
             return div(x, y);
             break;
         }
-        default:
-        {
+        case csqrt: {
+            return shk_sqrt(x);
+            break;
+        }
+        case cmusqrt: {
+            return shk_musqrt(x, y);
+            break;
+        }
+        default: {
             printf("%s%s%s", F_RED, w0016, NORMAL);
             return -0xffff;
         }

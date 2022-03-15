@@ -52,3 +52,13 @@ EXPORTS
     shk_BitNot                 @49
     shk_musqrt                 @50
     shk_frac                   @51
+    shk_spaPTPF                @52
+    shk_CoorSysPan             @53
+    shk_GetOldPoint_Pan        @54
+    shk_GetNewPoint_Pan        @55
+    shk_CoorSysRev             @56
+    shk_GetOldPoint_Rev        @57
+    shk_GetNewPoint_Rev        @58
+    shk_CoorSysNormalChange    @59
+    shk_GetOldPoint_NC         @60
+    shk_GetNewPoint_NC         @61

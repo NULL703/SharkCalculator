@@ -3,7 +3,7 @@
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.10.7  17:37
 Created by NULL_703
-Last change time on 2022.1.24  19:31
+Last change time on 2022.2.28  18:38
 ************************************************************************/
 #ifndef SHARKCALCULATOR_TEXTS_H
 #define SHARKCALCULATOR_TEXTS_H
@@ -19,10 +19,10 @@ Last change time on 2022.1.24  19:31
         "    [--storage]: Open storage mode.\n"\
         "    [--cleanlog]: Delete logfile.\n"\
         "    [--version] [-v]: Show version infomation.\n"\
-        "Program internal command: [n] [b] [l] [h] [s] [u] [e] [q] [c] [v]\n"\
+        "Program internal command: [n] [b] [l] [h] [s] [u] [e] [q] [c] [v] [insert] [setindex]\n"\
         "    n: Use normal calculate mode.\033[0;32;31m <Not open>\033[m\n"\
         "    b: Basic calculate mode.\n"\
-        "    l: Save calculate result.\033[0;32;31m <Not open>\033[m\n"\
+        "    l: Save calculate result.\n"\
         "    h: Show basic help.\n"\
         "    s: Open or close storage mode.\n"\
         "    u: Use result calculate.\n"\
@@ -30,17 +30,19 @@ Last change time on 2022.1.24  19:31
         "    q: Lookup the data in the result-pool.\n"\
         "    c: Clean the data in the result-pool.\n"\
         "    d: Delete logfile and exit program.\n"\
-        "    v: Show version infomation.\n"
+        "    v: Show version infomation.\n"\
+        "    insert: insert value into result-pool.\n"\
+        "    setindex: Set result-pool of data pointer.\033[1;33m <Test mode>\033[m\n"
     #define w0002 "Please input command:\n-->"
     #define w0003 "\aError: Cannot be divided by 0![E_1001]\n"
     #define w0004 "\aError: Invalid parameter![E_2001]\n"
     #define w0005 "\aError: Formula nothingness![E_2002]\n"
     #define w0006 "\aError: Formula parameter error![E_1002]\n"
-    #define w0007 "\aError: Unknow error![E_-1]\n"
+    #define w0007 "\aError: Unknown error![E_-1]\n"
     #define w0008 "\aError: Command not found![E_2101]\n"
     #define w0009 "Please input expression(format: number-operator-number):\n-->"
     #define w0010 "Basic calculate.\n"
-    #define w0011 "Unknow number! please try again.[E_2102]\n"
+    #define w0011 "Unknown number! please try again.[E_2102]\n"
     #define w0012 "Are you open documents on program directory? (y/n)\n"
     #define w0013 "\aError: Expression error![E_1003]\n"
     #define w0014 "\aError: This mode is not open![E_0001]\n"
@@ -66,4 +68,13 @@ Last change time on 2022.1.24  19:31
     #define w0034 "Are you delete logfile?(y/n)\n"
     #define w0035 "The all data in below:\n"
     #define w0036 "Result-pool utilization rate:\n"
+    #define w0037 "Auto-created by shcalc.\n"
+    #define w0038 "Please input a number for insert in result-pool(type quit to exit):\n"
+    #define w0039 "\aError: Number is invalid, cannot insert in result-pool.[E_3003]\n"
+    #define w0040 "result-pool data is full. Are you reset result-pool index value?(y/n)\n"
+    #define w0041 "Worning: This mode is nostable, please careful opertion.[W_9001]\n"
+    #define w0042 "\aError: This shcalc of version not support set result-pool of index value![E_9001]\n"
+    #define w0043 "Please input a filename:\n-->"
+    #define w0044 "Worning: Default filename of file already exists, please rename this file.[W_4041]\n"
+    #define w0045 "This filename of file already exists, filename have been use `Output.txt`.[I_4041]\n"
 #endif     //SHARKCALCULATOR_TEXTS_H

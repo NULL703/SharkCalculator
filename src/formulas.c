@@ -3,7 +3,7 @@
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.10.7  17:39
 Created by NULL_703
-Last change time on 2022.1.6  11:46
+Last change time on 2022.3.3  17:27
 ************************************************************************/
 #include "include/formulas.h"
 #include <stdlib.h>
@@ -165,7 +165,7 @@ double shk_deviation(double* datas, double mean, int term)
 
 double shk_RootDeviantion(double* datas, double mean, int term)
 {
-    return sqrt(shk_deviation(datas, mean, term));
+    return shk_sqrt(shk_deviation(datas, mean, term));
 }
 
 double PTL(double epA, double epB, double epC, double x, double y)
@@ -227,4 +227,110 @@ double** shk_MatrixSub(double *InputExpr1, double *InputExpr2, int row, int col)
         }
     }
     return result;
+}
+
+double shk_spaPTPF(SHK_SOPCA addr1, SHK_SOPCA addr2)
+{
+    double result;
+    result = shk_sqrt(shk_pow(addr1.rho, 2) + shk_pow(addr2.rho, 2));
+    result -= 2 * addr1.rho * addr2.rho * cos(addr1.theta - addr2.theta);
+    return result;
+}
+
+SHK_PRACSA shk_CoorSysPan(SHK_PRACSA objAddr, SHK_PRACSA newOrigPointAddr, int calcMode)
+{
+    SHK_PRACSA result;
+    switch(calcMode)
+    {
+        //某点在平面直角坐标系中平移，已知平移后的坐标和平移后点O的新坐标，求该点的原坐标
+        case 0: {
+            result.x = objAddr.x + newOrigPointAddr.x;
+            result.y = objAddr.y + newOrigPointAddr.y;
+            break;
+        }
+        //某点在平面直角坐标系中平移，已知该点原先的坐标和平移后点O的新坐标，求平移后该点的坐标
+        case 1: {
+            result.x = objAddr.x - newOrigPointAddr.x;
+            result.y = objAddr.y - newOrigPointAddr.y;
+            break;
+        }
+    }
+    return result;
+}
+
+SHK_PRACSA shk_GetOldPoint_Pan(SHK_PRACSA newAddr, SHK_PRACSA newOrigPointAddr)
+{
+    return shk_CoorSysPan(newAddr, newOrigPointAddr, 0);
+}
+
+SHK_PRACSA shk_GetNewPoint_Pan(SHK_PRACSA oldAddr, SHK_PRACSA newOrigPointAddr)
+{
+    return shk_CoorSysPan(oldAddr, newOrigPointAddr, 1);
+}
+
+SHK_PRACSA shk_CoorSysRev(SHK_PRACSA objAddr, double angle, int calcMode)
+{
+    SHK_PRACSA result;
+    switch(calcMode)
+    {
+        //求旋转前该点的坐标
+        case 0: {
+            result.x = objAddr.x * cos(angle) - objAddr.y * sin(angle);
+            result.y = objAddr.x * sin(angle) + objAddr.y * cos(angle);
+            break;
+        }
+        //求旋转后该点的坐标
+        case 1: {
+            result.x = objAddr.x * cos(angle) + objAddr.y * sin(angle);
+            result.y = -objAddr.x * sin(angle) + objAddr.y * cos(angle);
+            break;
+        }
+    }
+    return result;
+}
+
+SHK_PRACSA shk_GetOldPoint_Rev(SHK_PRACSA newAddr, double angle)
+{
+    return shk_CoorSysRev(newAddr, angle, 0);
+}
+
+SHK_PRACSA shk_GetNewPoint_Rev(SHK_PRACSA oldAddr, double angle)
+{
+    return shk_CoorSysRev(oldAddr, angle, 1);
+}
+
+SHK_PRACSA shk_CoorSysNormalChange(SHK_PRACSA objAddr, SHK_PRACSA newOrigPointAddr, double angle,
+                                int calcMode)
+{
+    SHK_PRACSA result;
+    double temp = 0.0;
+    switch(calcMode)
+    {
+        //求原坐标
+        case 0: {
+            result.x = objAddr.x * cos(angle) - objAddr.y * sin(angle) + newOrigPointAddr.x;
+            result.y = objAddr.x * sin(angle) + objAddr.y * cos(angle) + newOrigPointAddr.y;
+            break;
+        }
+        //求新坐标
+        case 1: {
+            temp = (objAddr.x - newOrigPointAddr.x) * cos(angle);
+            result.x = temp + (objAddr.x - newOrigPointAddr.y) * sin(angle);
+            //刷新临时变量为第二个临时变量的值
+            temp = -(objAddr.x - newOrigPointAddr.x) * sin(angle);
+            result.y = temp + (objAddr.y - newOrigPointAddr.y) * cos(angle);
+            break;
+        }
+    }
+    return result;
+}
+
+SHK_PRACSA shk_GetOldPoint_NC(SHK_PRACSA newAddr, SHK_PRACSA newOrigPointAddr, double angle)
+{
+    return shk_CoorSysNormalChange(newAddr, newOrigPointAddr, angle, 0);
+}
+
+SHK_PRACSA shk_GetNewPoint_NC(SHK_PRACSA oldAddr, SHK_PRACSA newOrigPointAddr, double angle)
+{
+    return shk_CoorSysNormalChange(oldAddr, newOrigPointAddr, angle, 1);
 }

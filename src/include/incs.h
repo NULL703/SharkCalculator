@@ -3,7 +3,7 @@
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.10.7  17:32
 Created by NULL_703
-Last change time on 2022.1.24  19:18
+Last change time on 2022.3.6  12:18
 ************************************************************************/
 #ifndef SHARKCALCULATOR_INCS_H
 #define SHARKCALCULATOR_INCS_H
@@ -18,6 +18,7 @@ Last change time on 2022.1.24  19:18
 #include <cstring>
 #include <list>
 #include <stack>
+#include <unistd.h>
 #include "Colors.h"
 #include "logtexts.h"
 #include "formulas.h"
@@ -25,7 +26,7 @@ Last change time on 2022.1.24  19:18
 #ifndef zh_CN
     #include "texts.h"
     #define versioninfo "shcalc V1.0.2 release version.\n"\
-        "This software is open source software, shcalc and libformula for source code use MIT licence.\n"\
+        "This software is open source software, shcalc and libformula of source code use MIT licence.\n"\
         "Project address: https://github.com/NULL_703/SharkCalculator \n"\
         "Author: NULL_703 <wangsonglin703@163.com>\n"
 #else

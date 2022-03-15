@@ -3,12 +3,17 @@
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.11.22  13:18
 Created by NULL_703
-Last change time on 2022.1.3  21:36
+Last change time on 2022.3.11  8:01
 ************************************************************************/
 #ifndef LIBFORMULA_DEFVAR_H
 #define LIBFORMULA_DEFVAR_H
 
 #ifndef SHK_DEFINE
+    //Formula library error flag.
+    #define OPTIONERR "!OPE"    //参数选项错误
+    #define STRTOOLONG "!SLE"    //字符串太长
+    #define BITTOOLONG "!BLE"    //位数过长
+    #define NOTEQUAL "!NEQ"    //不等于
     //Boolean value
     #define SHK_DEFINE
     #ifndef SHK_BOOLVALUE

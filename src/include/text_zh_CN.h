@@ -3,7 +3,7 @@
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.12.6  12:37
 Created by NULL_703
-Last change time on 2022.1.24  19:31
+Last change time on 2022.2.28  18:39
 ************************************************************************/
 #ifndef SHARKCALCULATOR_TEXTS_H
 #define SHARKCALCULATOR_TEXTS_H
@@ -19,10 +19,10 @@ Last change time on 2022.1.24  19:31
         "    [--storage]: 打开存储模式。\n"\
         "    [--cleanlog]: 删除日志文件。\n"\
         "    [--version] [-v]: 显示版本信息。\n"\
-        "程序内部命令: [n] [b] [l] [h] [s] [u] [e] [q] [c]\n"\
+        "程序内部命令: [n] [b] [l] [h] [s] [u] [e] [q] [c] [insert] [setindex]\n"\
         "    n: 使用常规计算。\033[0;32;31m <尚未开放>\033[m\n"\
         "    b: 简单计算模式。\n"\
-        "    l: 保存计算结果。\033[0;32;31m <尚未开放>\033[m\n"\
+        "    l: 保存计算结果。\n"\
         "    h: 显示简单的帮助。\n"\
         "    s: 打开或关闭存储模式。\n"\
         "    u: 使用结果进行计算。\n"\
@@ -30,7 +30,9 @@ Last change time on 2022.1.24  19:31
         "    q: 查找结果池中的数据。\n"\
         "    c: 清除结果池中的数据。\n"\
         "    d: 删除日志文件并退出程序。\n"\
-        "    v: 显示版本信息。\n"
+        "    v: 显示版本信息。\n"\
+        "    insert: 插入数值到存储池中。\n"\
+        "    setindex: 设置存储池的数据指针。\033[1;33m <测试功能>\033[m\n"
     #define w0002 "请输入命令:\n-->"
     #define w0003 "\a错误：不能除以0！[E_1001]\n"
     #define w0004 "\a错误：无效参数！[E_2001]\n"
@@ -66,4 +68,13 @@ Last change time on 2022.1.24  19:31
     #define w0034 "你确定要删除日志文件吗？(y/n)\n"
     #define w0035 "所有数据如下：\n"
     #define w0036 "存储池使用率：\n"
+    #define w0037 "自动创建自：shcalc\n"
+    #define w0038 "请输入一个数值以插入到存储池中(输入quit退出)：\n"
+    #define w0039 "\a错误：数字是无效的，不能插入到存储池中。[E_3003]\n"
+    #define w0040 "存储池数据已满。你要重置存储池索引值吗？(y/n)\n"
+    #define w0041 "警告：此模式是不稳定的，请谨慎操作。[W_9001]\n"
+    #define w0042 "\a错误：此版本的shcalc不支持设置存储池的索引值！[E_9001]\n"
+    #define w0043 "请输入一个文件名：\n-->"
+    #define w0044 "警告：默认文件名的文件已存在，请重命名这个文件。[W_4041]\n"
+    #define w0045 "这个文件名的文件已存在，文件名已使用`Output.txt`。[I_4041]\n"
 #endif     //SHARKCALCULATOR_TEXTS_H

@@ -3,7 +3,7 @@
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.11.4  19:31
 Created by NULL_703
-Last change time on 2022.1.8  16:55
+Last change time on 2022.3.6  11:39
 ************************************************************************/
 #include "include/functions.h"
 #include <math.h>
@@ -47,7 +47,7 @@ double shk_pow(double x, int y)
 
 double shk_cexp(double x)
 {
-    return shk_pow(M_E, x);
+    return pow(M_E, x);
 }
 
 int shk_strlen(const char* s)
@@ -92,14 +92,15 @@ SHK_BOOL shk_IsStrNum(const char* num, SHK_BOOL intMode)
     SHK_BOOL decPoint = SHK_FALSE;
     for(int i = 0; i < count; i++)
     {
-        if(num[i] > 52 || num[i] < 48)
+        if(num[i] > 57 || num[i] < 48)
         {
+            if(num[i] == '-' && i == 0) continue;    //负数只需要检测到第一个字符为'-'号即可
             if(intMode == SHK_TRUE)
                 return SHK_FALSE;
             else{
-                if(num[i] != '.' || (num[i] == '.' && decPoint == SHK_TRUE))
+                if(num[i] != '.')
                     return SHK_FALSE;
-                if(num[i] == '.')
+                if(num[i] == '.' && decPoint == SHK_FALSE)    //小数点只能出现一次
                     decPoint = SHK_TRUE;
             }
         }
@@ -111,11 +112,20 @@ int shk_AsciiToNum(const char* number)
 {
     int numBit = 0;
     int result = 0;
+    SHK_BOOL nav = SHK_FALSE;
     numBit = shk_strlen(number);
     if(numBit >= 10 || shk_IsStrNum(number, SHK_TRUE) == SHK_FALSE)
         return 0xffff;
     for(int i = 0; i < numBit; i++)
+    {
+        if(number[i] == 45 && i == 0)
+        {
+            nav = SHK_TRUE;
+            continue;
+        }
         result += (number[i] - 48) * (shk_pow(10, numBit - i) / 10);
+    }
+    if(nav == SHK_TRUE) return -result;
     return result;
 }
 
@@ -123,9 +133,15 @@ char* shk_NumToAscii(int number)
 {
     static char result[9];
     int temp = number;
+    int index = 0;
+    if(number < 0)
+    {
+        result[0] = 45;
+        index = 1;
+    }
     if(shk_NumberLevel(number) > 9)
-        return "!NEQ";
-    for(int i = 0; i < 9; ++i)
+        return NOTEQUAL;
+    for(int i = index; i < 9; ++i)
     {
         if(i == shk_NumberLevel(number))
             break;
@@ -147,7 +163,7 @@ char* shk_StrInvert(const char* str)
 {
     int charCount = shk_strlen(str);
     if(charCount > 0xffff)
-        return "!SLE";
+        return STRTOOLONG;
     static char result[0xffff];
     for(int i = charCount, j = 0; i >= 0; i--, j++)
         result[j] = str[i - 1];
@@ -160,7 +176,7 @@ SHK_BINARY shk_DecToBin(int decNum)
     for(int i = 0; decNum >= 1; i++)
     {
         if(i >= 0x100)
-            return "!BLE";
+            return BITTOOLONG;
         result[i] = shk_mod(decNum, 2) + 48;
         /*在每次取模之后减去余数再除以2*/
         decNum -= shk_mod(decNum, 2);
@@ -189,7 +205,7 @@ SHK_BINARY shk_BitCalc(const SHK_BINARY bin1, const SHK_BINARY bin2, int calcMod
 {
     static char result[0x100];
     if((shk_strlen(bin1) != shk_strlen(bin2)) || shk_strlen(bin1) > 0x100 || shk_strlen(bin2) > 0x100)
-        return "!NEQ";
+        return NOTEQUAL;
     for(int i = 0; i <= 0x100; ++i)
     {
         if((int)bin1[i] < 48 || (int)bin2[i] < 48 || (int)bin1[i] > 49 || (int)bin2[i] > 49)
@@ -206,7 +222,7 @@ SHK_BINARY shk_BitCalc(const SHK_BINARY bin1, const SHK_BINARY bin2, int calcMod
             else
                 result[i] = '0';
         }else
-            return "!OPE";
+            return OPTIONERR;
     }
     return result;
 }
@@ -225,7 +241,7 @@ SHK_BINARY shk_BitNot(const SHK_BINARY bin)
 {
     static char result[0x100];
     if(shk_strlen(bin) > 0x100)
-        return "!NEQ";
+        return NOTEQUAL;
     for(int i = 0; i <= 0x100; ++i)
     {
         if((int)bin[i] < 48 || (int)bin[i] > 49)
@@ -243,4 +259,20 @@ double shk_frac(SHK_FRACTION x)
     if((int)x.numerator == 0)
         return -0xffff;
     return x.numerator / x.denominator;
+}
+
+SHK_BOOL shk_InRange(double max, double min, double objValue, SHK_BOOL openRange)
+{
+    if(openRange == SHK_TRUE)
+    {
+        if(objValue < max && objValue > min)
+            return SHK_TRUE;
+        else
+            return SHK_FALSE;
+    }else{
+        if(objValue <= max && objValue >= min)
+            return SHK_TRUE;
+        else
+            return SHK_FALSE;
+    }
 }
