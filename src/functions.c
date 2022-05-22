@@ -3,7 +3,7 @@
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.11.4  19:31
 Created by NULL_703
-Last change time on 2022.3.6  11:39
+Last change time on 2022.5.22  19:14
 ************************************************************************/
 #include "include/functions.h"
 #include <math.h>
@@ -24,6 +24,8 @@ double shk_musqrt(double x, double y)
     double result;
     if(x == 0)
         return 0;
+    if(x <= 0 && shk_IsOdd(y) == SHK_FALSE)
+        return NAN;
     result = ((y - 1) * temp / y) + (x / (pow(temp, y - 1) * y));
     while(shk_abs(result - temp) > 1e-8)
     {
@@ -115,7 +117,7 @@ int shk_AsciiToNum(const char* number)
     SHK_BOOL nav = SHK_FALSE;
     numBit = shk_strlen(number);
     if(numBit >= 10 || shk_IsStrNum(number, SHK_TRUE) == SHK_FALSE)
-        return 0xffff;
+        return NAN;
     for(int i = 0; i < numBit; i++)
     {
         if(number[i] == 45 && i == 0)
@@ -131,23 +133,20 @@ int shk_AsciiToNum(const char* number)
 
 char* shk_NumToAscii(int number)
 {
-    static char result[9];
+    static char result[10];
     int temp = number;
     int index = 0;
-    if(number < 0)
-    {
-        result[0] = 45;
-        index = 1;
-    }
     if(shk_NumberLevel(number) > 9)
         return NOTEQUAL;
-    for(int i = index; i < 9; ++i)
+    for(int i = index; i < 9; ++i, index = i)
     {
         if(i == shk_NumberLevel(number))
             break;
         result[i] = shk_mod(temp, 10) + 48;
         temp /= 10;
     }
+    if(number < 0)
+        result[index] = 45;
     return shk_StrInvert(result);
 }
 
@@ -196,7 +195,7 @@ int shk_BinToDec(const char* origbin)
         else if(origbin[index - 1] == '0')
             result += 0;
         else
-            return 0xffff;
+            return NAN;
     }
     return result;
 }
@@ -257,7 +256,7 @@ SHK_BINARY shk_BitNot(const SHK_BINARY bin)
 double shk_frac(SHK_FRACTION x)
 {
     if((int)x.numerator == 0)
-        return -0xffff;
+        return NAN;
     return x.numerator / x.denominator;
 }
 
@@ -275,4 +274,36 @@ SHK_BOOL shk_InRange(double max, double min, double objValue, SHK_BOOL openRange
         else
             return SHK_FALSE;
     }
+}
+
+double shk_cot(double x)
+{
+    /* This function follow formula: cot = cos(x) / sin(x) */
+    return cos(x) / sin(x);
+}
+
+double shk_csc(double x)
+{
+    /* This function follow formula: csc = 1 / sin(x) */
+    return 1.0 / sin(x);
+}
+
+double shk_sec(double x)
+{
+    /* This function follow formula: sec = 1 / cos(x) */
+    return 1.0 / cos(x);
+}
+
+double shk_fmod(double x, double y)
+{
+    double fm = x;
+    while(fm > y) fm -= y;
+    return fm;
+}
+
+SHK_BOOL shk_incscmp(const char* incstr, const char* str)
+{
+    for(int i = 0; incstr[i] != '\0'; i++)
+        if(incstr[i] != str[i]) return SHK_FALSE;
+    return SHK_TRUE;
 }

@@ -3,22 +3,27 @@ Main program.
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.10.7  17:31
 Created by NULL_703
-Last change time on 2022.2.28  13:15
+Last change time on 2022.5.21  7:35
 ************************************************************************/
 #include "include/main.h"
 
-#define infcmdCount 13
-#define progcmdCount 9
+#define infcmdCount 14
+#define progcmdCount 10
+static double results[255];    //存储池最大数据量为255
+static int resultsIndex = 0;    //存储池数据写入的指针位置(存储池数据索引最大值)
+static SHK_BOOL storageModeSwitch = SHK_FALSE;    //存储模式状态
+static SHK_BOOL loggerStatus = SHK_TRUE;    //记录器状态
 
 //内部命令
 char infcmds[infcmdCount][0x20] = {
-    "n", "b", "l", "h", "s", "u", "e", "q", "c", "v", "d", "insert", "setindex"
+    "n", "b", "l", "h", "s", "u", "e", "q", "c", "v", "d", "insert", "setindex",
+    "nolog"
 };
 
 //程序选项
 char progcmds[progcmdCount][0x20] = {
     "", "-n", "-h", "--bh", "--basic", "--storage", "--cleanlog", "--version",
-    "-v"
+    "-v", "--nolog"
 };
 
 //命令匹配，命令类型为0时为内部命令，类型为1时为程序命令
@@ -59,7 +64,7 @@ void resultLookup::selectLookupMode()
         showAllResult(par);
     }else{
         printf("%s%s%s", F_RED, w0008, NORMAL);
-        configLog(6, __LINE__, __FILE__, __FUNCTION__);
+        configLog(6, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
     }
 }
 
@@ -88,7 +93,7 @@ void resultLookup::showAllResult(int maxResultNumber)
 int resultLookup::showErrorInfo()
 {
     printf("%s%s%s", F_RED, w0020, NORMAL);
-    configLog(4, __LINE__, __FILE__, __FUNCTION__);
+    configLog(4, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
     return 0;
 }
 
@@ -119,6 +124,11 @@ double getResultsValue(int index)
     return results[index];
 }
 
+SHK_BOOL getLoggerStatus()
+{
+    return loggerStatus;
+}
+
 void normalCalc()
 {
     //TODO:常规计算将在后续版本开放
@@ -130,7 +140,7 @@ double useResult(int resultNumber)
     if(resultNumber >= resultsIndex)
     {
         printf("%s%s%s", F_RED, w0020, NORMAL);
-        configLog(4, __LINE__, __FILE__, __FUNCTION__);
+        configLog(4, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
         return 0.0;
     }
     return results[resultNumber];
@@ -147,7 +157,7 @@ void storageCalc()
     if(x >= resultsIndex || y >= resultsIndex)
     {
         printf("%s%s%s", F_RED, w0020, NORMAL);
-        configLog(4, __LINE__, __FILE__, __FUNCTION__);
+        configLog(4, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
         commandProc();
         return;
     }
@@ -196,7 +206,7 @@ int basicCalculate()
     while('\n' != getchar());
     if(expr[0] == 'e')
     {
-        configLog(0, __LINE__, __FILE__, __FUNCTION__);
+        configLog(0, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
         exit(0);
     }
     for(int i = 0, j = 0; expr[i] != '\0'; i++, j++)
@@ -231,7 +241,7 @@ int basicCalculate()
         {
             printf("%s%s%s", F_YELLOW, w0021, NORMAL);
             resultsIndex = 0;
-            configLog(2, __LINE__, __FILE__, __FUNCTION__);
+            configLog(2, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
             results[resultsIndex] = result;
         }
         results[resultsIndex] = result;
@@ -270,7 +280,7 @@ void resultPoolInsert()
             {
                 printf("%s%s%s", F_YELLOW, w0021, NORMAL);
                 resultsIndex = 0;    //重置索引指针
-                configLog(2, __LINE__, __FILE__, __FUNCTION__);
+                configLog(2, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
             }else{
                 printf("%s%s%s", F_LIGHT_BLUE, w0030, NORMAL);
                 return;
@@ -340,13 +350,13 @@ void commandProc()
                 storageCalc();
             }else{
                 printf("%s%s%s", F_YELLOW, w0025, NORMAL);
-                configLog(4, __LINE__, __FILE__, __FUNCTION__);
+                configLog(4, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
             }
             break;
         }
         //退出程序
         case 6: {
-            configLog(0, __LINE__, __FILE__, __FUNCTION__);
+            configLog(0, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
             exit(0);
             break;
         }
@@ -356,7 +366,7 @@ void commandProc()
                 lookup.selectLookupMode();
             else{
                 printf("%s%s%s", F_RED, w0019, NORMAL);
-                configLog(4, __LINE__, __FILE__, __FUNCTION__);
+                configLog(4, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
             }
             break;
         }
@@ -386,9 +396,21 @@ void commandProc()
         }
         //设置存储池索引指针
         case 12: setStorageIndex(); break;
+        //开启或关闭日志模式
+        case 13: {
+            if(loggerStatus == SHK_FALSE)
+            {
+                loggerStatus = SHK_TRUE;
+                printf("%s%s%s", F_BLUE, w0046, NORMAL);
+            }else{
+                loggerStatus = SHK_FALSE;
+                printf("%s%s%s", F_BLUE, w0047, NORMAL);
+            }
+            break;
+        }
         default: {
             printf("%s%s%s", F_RED, w0008, NORMAL);
-            configLog(6, __LINE__, __FILE__, __FUNCTION__);
+            configLog(6, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
         }
     }
     commandProc();
@@ -425,19 +447,21 @@ int argCommandExec(const char** argv)
             commandProc();
             break;
         }
-        //生成日志文件
+        //删除日志文件
         case 6: deleteFile(); break;
         //显示版本信息
         case 7: 
         case 8: {
             printf("%s", versioninfo);
-            configLog(0, __LINE__, __FILE__, __FUNCTION__);
+            configLog(0, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
             break;
         }
+        //进入程序时不产生日志文件
+        case 9: loggerStatus = SHK_FALSE; remove("ProgramLog.log"); commandProc(); break;
         default: {
             printf("%s%s%s%s", F_RED, w0004, NORMAL, w0017);
             printf("%s%s%s  %s\n", w0001, w0022, __DATE__, __TIME__);
-            configLog(8, __LINE__, __FILE__, __FUNCTION__);
+            configLog(8, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
             commandProc();
         }
     }
@@ -446,7 +470,7 @@ int argCommandExec(const char** argv)
 
 int main(int argc, const char** argv)
 {
-    configLog(1, __LINE__, __FILE__, __FUNCTION__);
+    configLog(1, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
     if(argc > 2)
         immediateCalculate(argc, argv);
     #ifdef __WIN32
@@ -456,12 +480,12 @@ int main(int argc, const char** argv)
     {
         printf("%s%s%s", F_RED, w0004, NORMAL);
         printf("%s%s%s%s  %s\n", w0017, w0001, w0022, __DATE__, __TIME__);
-        configLog(8, __LINE__, __FILE__, __FUNCTION__);
+        configLog(8, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
         commandProc();
     }else{
         return argCommandExec(argv);
     }
     printf("%s%s%s", F_RED, w0007, NORMAL);
-    configLog(-1, __LINE__, __FILE__, __FUNCTION__);
+    configLog(-1, __LINE__, __FILE__, __FUNCTION__, loggerStatus);
     return 1;
 }

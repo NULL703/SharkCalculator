@@ -3,13 +3,19 @@
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.12.24  13:39
 Created by NULL_703
-Last change time on 2022.2.28  18:18
+Last change time on 2022.3.16  10:57
 ************************************************************************/
 #include "include/fileopt.h"
 #include "include/main.h"
 
-void configLog(int flag, int line, const char* fileName, const char* funcName)
+static double foResults[255];
+static int foResultsIndex = 0;
+static SHK_BOOL foStorageModeSwitch = SHK_FALSE;
+
+void configLog(int flag, int line, const char* fileName, const char* funcName, SHK_BOOL loggerFlag)
 {
+    if(loggerFlag == SHK_FALSE)
+        return;
     ofstream wrfile("ProgramLog.log", ios::app);
     if(!wrfile.fail())
     {
@@ -80,14 +86,14 @@ void configLog(int flag, int line, const char* fileName, const char* funcName)
 void getResult(int index)
 {
     for(int i = 0; i < index; ++i)
-        results[i] = getResultsValue(i);
+        foResults[i] = getResultsValue(i);
 }
 
 void refvar()
 {
-    storageModeSwitch = getStorageStatus();
-    resultsIndex = getResultsIndex();
-    getResult(resultsIndex);
+    foStorageModeSwitch = getStorageStatus();
+    foResultsIndex = getResultsIndex();
+    getResult(foResultsIndex);
 }
 
 SHK_BOOL checkFileStatus(const char* fileName)
@@ -139,16 +145,16 @@ void saveResult()
         printf("%s%s%s", F_LIGHT_BLUE, w0045, NORMAL);
         resultFile.open(defaultFileName, ios::app);
     }
-    if(storageModeSwitch == SHK_FALSE)
+    if(foStorageModeSwitch == SHK_FALSE)
     {
         printf("%s%s%s", F_RED, w0019, NORMAL);
-        configLog(4, __LINE__, __FILE__, __FUNCTION__);
+        configLog(4, __LINE__, __FILE__, __FUNCTION__, getLoggerStatus());
         return;
     }
     resultFile << w0037 << endl;
     resultFile << "Sequence-number\t\tresult" << endl;
-    for(int i = 0; i <= resultsIndex - 1; ++i)
-        resultFile << i << "\t\t\t" << results[i] << endl;
+    for(int i = 0; i <= foResultsIndex - 1; ++i)
+        resultFile << i << "\t\t\t" << foResults[i] << endl;
     printf("%s%s%s", F_BLUE, w0031, NORMAL);
     resultFile.close();
 }

@@ -3,30 +3,36 @@
 Copyright (C) 2022 NULL_703. All rights reserved.
 Created on 2022.1.14  18:42
 Created by NULL_703
-Last change time on 2022.3.15  10:38
+Last change time on 2022.3.19  15:28
 ************************************************************************/
 #ifndef SHARKCALCULATOR_CALCENGINE_H
 #define SHARKCALCULATOR_CALCENGINE_H
 
 #include "incs.h"
-#include "calculate.h"
 
 namespace CalculateEngine
 {
-    enum charType{
+    typedef enum charType{
         cherr, chadd, chsub, chmul, chdiv, chslfinc, chsrhinc,      /* + - * / ( ) */
         chcma, chsem, chblfinc, chbrhinc, chlflb, chrhlb,           /* , ; { } < > */
         chsl, chlfmdinc, chrhmdinc, chequ, chcolon                  /* $ [ ] = : */
-    };
+    }KeyChars;
+    typedef enum keyToken{
+        shlog, shln, shfunc, shtan, shatan, shsin, shasin, shcos, shacos, shsqrt,     /* 关键字 */
+        shmat, shdiv, shrand, shclear, shif, shelse, shrange, shwhile, shreturn       /* 保留字 */
+    }KeyTokens;
     class mixcalc{
         public:
             double normalExprProcess(const char* expr);
             double functionExpr(const char* expr);
         private:
-            char operChar[0xfff];
-            int charIndex = 0;
+            KeyChars opchars[0xff];
             int keycharMatch(char ch);
             int keywordMatch(const char* keyword);
+            double exprCalc(double x, double y, KeyChars operChar);
+            KeyChars operProc(char op);
+            int operType(char oper);
+            SHK_BOOL symbolCheck(const char* symbols, int index);
     };
-}    //namespace calculateEngine
+}    //namespace CalculateEngine
 #endif    //SHARKCLACULATOR_CALCENGINE_H

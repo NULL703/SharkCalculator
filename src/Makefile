@@ -3,7 +3,7 @@
 # Copyright (C) 2021-2022 NULL_703. All rights reserved.
 # Created on 2021.10.7  17:40
 # Created by NULL_703
-# Last change time on 2022.1.3  11:32
+# Last change time on 2022.5.21  19:31
 #*************************************************************************
 cpp = g++
 gc = gcc
@@ -12,10 +12,11 @@ flag = -O2 -std=c++11 -Wall -s -c
 AsmFlag = -S -O2 -std=c++11 -Wall
 AsmCflag = -S -O2 -std=c99 -Wall
 cppasms = main.asm calculate.asm fileopt.asm
-casms = formulas.asm functions.asm network.asm phyformula.asm
+casms = formulas.asm functions.asm network.asm phyformula.asm hextrs.asm cpcolfunc.asm \
+shvector.asm
 bin = shcalc
 obj = main.o calculate.o fileopt.o
-Lobj = formulas.o functions.o network.o phyformula.o
+Lobj = formulas.o functions.o network.o phyformula.o hextrs.o cpcolfunc.o shvector.o
 lib = libformula.so
 
 all: $(bin) $(lib)

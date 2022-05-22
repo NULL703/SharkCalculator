@@ -3,7 +3,7 @@ formulas.c的函数声明。
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.10.7  21:39
 Created by NULL_703
-Last change time on 2022.3.4  10:48
+Last change time on 2022.4.1  6:58
 ************************************************************************/
 #ifndef LIBFORMULA_FORMULAS_H
 #define LIBFORMULA_FORMULAS_H
@@ -13,7 +13,7 @@ Last change time on 2022.3.4  10:48
 *定义自定义变量类型及其他处理
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 #include "functions.h"
-#include "defvar.h"     //定义代码位于defvar.h中。
+#include "defvar.h"     //类型、常量定义位于defvar.h中。
 
 /*End of section.*/
 
@@ -87,9 +87,9 @@ SHK_PRACSA shk_GetNewPoint_Rev(SHK_PRACSA oldAddr, double angle);
 //平面直角坐标系中点的一般变换(函数组主函数)
 SHK_PRACSA shk_CoorSysNormalChange(SHK_PRACSA objAddr, SHK_PRACSA newOrigPointAddr, double angle,
                                 int calcMode);
-//求原坐标
+//求原坐标(函数组引导函数)
 SHK_PRACSA shk_GetOldPoint_NC(SHK_PRACSA newAddr, SHK_PRACSA newOrigPointAddr, double angle);
-//求新坐标
+//求新坐标(函数组引导函数)
 SHK_PRACSA shk_GetNewPoint_NC(SHK_PRACSA oldAddr, SHK_PRACSA newOrigPointAddr, double angle);
 /*---------------------------------------------------------------------*/
 /*End of section.*/

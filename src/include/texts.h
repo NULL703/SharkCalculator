@@ -3,12 +3,13 @@
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.10.7  17:37
 Created by NULL_703
-Last change time on 2022.2.28  18:38
+Last change time on 2022.3.17  10:30
 ************************************************************************/
 #ifndef SHARKCALCULATOR_TEXTS_H
 #define SHARKCALCULATOR_TEXTS_H
     #define w0001 "SharkCalculator v1.0.2, Copyright (C) 2021-2022 NULL_703. All rights reserved.\n"\
-        "Usage: shcalc {options: [<none option>] [-<calculate flag>] [-n] [-h] [-v] [--bh] [--basic] [--storage] [--version]} {nums} ...\n"\
+        "Usage: shcalc {options: [<none option>] [-<calculate flag>] [-n] [-h] [-v] [--bh] [--basic] "\
+        "[--storage] [--version] [--nolog]} {nums} ...\n"\
         "Mainly option:\n"\
         "    [<none option>]: Use internal command.(for no option)\n"\
         "    [-<calculate flag>]: Calculate same formulas or expression.\n"\
@@ -19,7 +20,8 @@ Last change time on 2022.2.28  18:38
         "    [--storage]: Open storage mode.\n"\
         "    [--cleanlog]: Delete logfile.\n"\
         "    [--version] [-v]: Show version infomation.\n"\
-        "Program internal command: [n] [b] [l] [h] [s] [u] [e] [q] [c] [v] [insert] [setindex]\n"\
+        "    [--nolog]: Open nolog mode.\n"\
+        "Program internal command: [n] [b] [l] [h] [s] [u] [e] [q] [c] [v] [insert] [setindex] [nolog]\n"\
         "    n: Use normal calculate mode.\033[0;32;31m <Not open>\033[m\n"\
         "    b: Basic calculate mode.\n"\
         "    l: Save calculate result.\n"\
@@ -32,7 +34,8 @@ Last change time on 2022.2.28  18:38
         "    d: Delete logfile and exit program.\n"\
         "    v: Show version infomation.\n"\
         "    insert: insert value into result-pool.\n"\
-        "    setindex: Set result-pool of data pointer.\033[1;33m <Test mode>\033[m\n"
+        "    setindex: Set result-pool of data pointer.\033[1;33m <Test mode>\033[m\n"\
+        "    nolog: Open or close nolog mode.\n"
     #define w0002 "Please input command:\n-->"
     #define w0003 "\aError: Cannot be divided by 0![E_1001]\n"
     #define w0004 "\aError: Invalid parameter![E_2001]\n"
@@ -77,4 +80,6 @@ Last change time on 2022.2.28  18:38
     #define w0043 "Please input a filename:\n-->"
     #define w0044 "Worning: Default filename of file already exists, please rename this file.[W_4041]\n"
     #define w0045 "This filename of file already exists, filename have been use `Output.txt`.[I_4041]\n"
+    #define w0046 "Nolog mode have been open.[I_4042]\n"
+    #define w0047 "Nolog mode have been close.[I_4043]\n"
 #endif     //SHARKCALCULATOR_TEXTS_H

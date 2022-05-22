@@ -3,9 +3,10 @@
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.11.29  16:17
 Created by NULL_703
-Last change time on 2022.3.6  11:46
+Last change time on 2022.3.16  10:58
 ************************************************************************/
 #include "include/calculate.h"
+#include "include/main.h"
 
 #define calcoptCount 11
 char calcopt[calcoptCount][0x14] = {
@@ -31,7 +32,7 @@ void formulaErrno(int count, const char**argv)
         if(argv[i] == NULL)
         {
             printf("%s%s%s", F_RED, w0006, NORMAL);
-            configLog(6, __LINE__, __FILE__, __FUNCTION__);
+            configLog(6, __LINE__, __FILE__, __FUNCTION__, getLoggerStatus());
             exit(1);
         }
     }
@@ -112,10 +113,10 @@ void immediateCalculate(int argc, const char** argv)
             system("cls");
 #endif
             printf("%s%s%s", F_RED, w0016, NORMAL);
-            configLog(-1, __LINE__, __FILE__, __FUNCTION__);
+            configLog(-1, __LINE__, __FILE__, __FUNCTION__, getLoggerStatus());
         }
     }
-    configLog(0, __LINE__, __FILE__, __FUNCTION__);
+    configLog(0, __LINE__, __FILE__, __FUNCTION__, getLoggerStatus());
     exit(0);
 }
 

@@ -62,3 +62,14 @@ EXPORTS
     shk_CoorSysNormalChange    @59
     shk_GetOldPoint_NC         @60
     shk_GetNewPoint_NC         @61
+    shk_HexToDec               @62
+    shk_silhb                  @63
+    shk_rgbacheck              @64
+    shk_HexcoToStd             @65
+    shk_imgsizeof              @66
+    shk_covecas                @67
+    shk_covecadd               @68
+    shk_covecsub               @69
+    shk_covecnmul              @70
+    shk_isparcrvec             @71
+    shk_ispercrvec             @72

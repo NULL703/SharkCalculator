@@ -1,9 +1,9 @@
 /************************************************************************
-各种公式的算法(公式库)。
+各种公式的算法(公式库核心部分)。
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.10.7  17:39
 Created by NULL_703
-Last change time on 2022.3.3  17:27
+Last change time on 2022.5.22  19:21
 ************************************************************************/
 #include "include/formulas.h"
 #include <stdlib.h>
@@ -115,7 +115,7 @@ double shk_gradient(double x1, double x2, double y1, double y2)
     double k;
     if(x1 == x2)
     {
-        return -0xffff;
+        return NAN;
     }else{
         k = (y2 - y1) / (x2 - x1);
     }
@@ -125,7 +125,7 @@ double shk_gradient(double x1, double x2, double y1, double y2)
 long shk_perm(int tpn, int lwn)
 {
     if(lwn > 10)
-        return -0xffff;
+        return NAN;
     long result = 1;
     for(; lwn > 0; lwn--)
     {
@@ -182,7 +182,7 @@ double PTL(double epA, double epB, double epC, double x, double y)
 int shk_FibonacciSON(int n)
 {
     if(n <= 0)
-        return -0xffff;
+        return NAN;
     double result;
     double t1 = 1 / sqrt(5);
     double t2 = ((1 + sqrt(5)) / 2);

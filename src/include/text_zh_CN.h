@@ -3,12 +3,13 @@
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.12.6  12:37
 Created by NULL_703
-Last change time on 2022.2.28  18:39
+Last change time on 2022.3.17  10:29
 ************************************************************************/
 #ifndef SHARKCALCULATOR_TEXTS_H
 #define SHARKCALCULATOR_TEXTS_H
     #define w0001 "SharkCalculator v1.0.2, Copyright (C) 2021-2022 NULL_703. All rights reserved.\n"\
-        "用法: shcalc {选项: [<没有选项>] [-<计算选项标识符>] [-n] [-h] [-v] [--bh] [--basic] [--storage] [--version]} {数字} ...\n"\
+        "用法: shcalc {选项: [<没有选项>] [-<计算选项标识符>] [-n] [-h] [-v] [--bh] [--basic] [--storage] "\
+        "[--version] [--nolog]} {数字} ...\n"\
         "主要选项:\n"\
         "    [<没有选项>]: 使用内部命令。(在没有选项的情况下)\n"\
         "    [-<计算选项标识符>]: 直接计算一些公式或一些算式。\n"\
@@ -19,7 +20,8 @@ Last change time on 2022.2.28  18:39
         "    [--storage]: 打开存储模式。\n"\
         "    [--cleanlog]: 删除日志文件。\n"\
         "    [--version] [-v]: 显示版本信息。\n"\
-        "程序内部命令: [n] [b] [l] [h] [s] [u] [e] [q] [c] [insert] [setindex]\n"\
+        "    [--nolog]: 打开无记录模式。\n"\
+        "程序内部命令: [n] [b] [l] [h] [s] [u] [e] [q] [c] [insert] [setindex] [nolog]\n"\
         "    n: 使用常规计算。\033[0;32;31m <尚未开放>\033[m\n"\
         "    b: 简单计算模式。\n"\
         "    l: 保存计算结果。\n"\
@@ -32,7 +34,8 @@ Last change time on 2022.2.28  18:39
         "    d: 删除日志文件并退出程序。\n"\
         "    v: 显示版本信息。\n"\
         "    insert: 插入数值到存储池中。\n"\
-        "    setindex: 设置存储池的数据指针。\033[1;33m <测试功能>\033[m\n"
+        "    setindex: 设置存储池的数据指针。\033[1;33m <测试功能>\033[m\n"\
+        "    nolog: 打开或关闭无记录模式。\n"
     #define w0002 "请输入命令:\n-->"
     #define w0003 "\a错误：不能除以0！[E_1001]\n"
     #define w0004 "\a错误：无效参数！[E_2001]\n"
@@ -77,4 +80,6 @@ Last change time on 2022.2.28  18:39
     #define w0043 "请输入一个文件名：\n-->"
     #define w0044 "警告：默认文件名的文件已存在，请重命名这个文件。[W_4041]\n"
     #define w0045 "这个文件名的文件已存在，文件名已使用`Output.txt`。[I_4041]\n"
+    #define w0046 "无记录模式已打开。[I_4042]\n"
+    #define w0047 "无记录模式已关闭。[I_4043]\n"
 #endif     //SHARKCALCULATOR_TEXTS_H

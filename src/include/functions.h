@@ -3,7 +3,7 @@
 Copyright (C) 2021-2022 NULL_703. All rights reserved.
 Created on 2021.11.4  19:33
 Created by NULL_703
-Last change time on 2022.2.16  21:04
+Last change time on 2022.3.18  11:04
 ************************************************************************/
 #ifndef LIBFORMULA_FUNCTIONS_H
 #define LIBFORMULA_FUNCTIONS_H
@@ -85,6 +85,10 @@ SHK_BINARY shk_BitOr(const SHK_BINARY bin1, const SHK_BINARY bin2);
 /*---------------------------------------------------------------------*/
 //二进制取反运算
 SHK_BINARY shk_BitNot(const SHK_BINARY bin);
+//十六进制转换为十进制
+int shk_HexToDec(const char* hexValue);
+//单个十六进制值转换为二进制
+SHK_BINARY shk_silhb(char hex);
 /*End of section.*/
 #ifdef __cplusplus
 }
